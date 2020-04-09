@@ -5,7 +5,8 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
 
-        <GridLength x:Key="GridLength1_OuterBorder">10</GridLength>
+        <GridLength x:Key="GridLength1_OuterBorder">20</GridLength>
+        <Thickness x:Key="Border2_MWOuterBorder">15</Thickness>
 
     </Application.Resources>
 </Application>

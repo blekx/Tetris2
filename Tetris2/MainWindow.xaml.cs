@@ -23,6 +23,7 @@ namespace Tetris2
         public MainWindow()
         {
             InitializeComponent();
+            BorderBlinker borderBlinker = new BorderBlinker(gridMain);
         }
 
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -34,6 +35,11 @@ namespace Tetris2
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
+        }
+
+        private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
+        {
+            //throw new Exception("Border" + sender.ToString());// +BorderSystem.Windows.Shapes.Rectangle);
         }
     }
 }
