@@ -1,0 +1,11 @@
+﻿<Application x:Class="Tetris2.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Tetris2"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <GridLength x:Key="GridLength1_OuterBorder">10</GridLength>
+
+    </Application.Resources>
+</Application>
