@@ -96,6 +96,13 @@ namespace Tetris2
         private void MouseHunter_Tick(object sender, EventArgs e)
         {
             ResizeWindow();
+            mw.tbTest.Text = Report();
+        }
+
+        private double Max(double d1,double d2)
+        {
+            if (d2 > d1) return d2;
+            else return d1;
         }
 
         private void ResizeWindow()
@@ -103,21 +110,21 @@ namespace Tetris2
             mouseMovedTo = GetMousePosition();
             if (resizeFrom.VerticalDirection == DV.B)
             {
-                mw.Height = resizeFrom.Height + (mouseMovedTo.Y - resizeFrom.MouseStart.Y);
+                mw.Height = Max(resizeFrom.Height + (mouseMovedTo.Y - resizeFrom.MouseStart.Y), mw.MinHeight);
             }
             if (resizeFrom.HorizontalDirection == DH.R)
             {
-                mw.Width = resizeFrom.Width + (mouseMovedTo.X - resizeFrom.MouseStart.X);
+                mw.Width = Max(resizeFrom.Width + (mouseMovedTo.X - resizeFrom.MouseStart.X), mw.MinWidth);
             }
             if (resizeFrom.VerticalDirection == DV.T)
             {
                 mw.Top = resizeFrom.Top + (mouseMovedTo.Y - resizeFrom.MouseStart.Y);
-                mw.Height = resizeFrom.Height - (mouseMovedTo.Y - resizeFrom.MouseStart.Y);
+                mw.Height = Max(resizeFrom.Height - (mouseMovedTo.Y - resizeFrom.MouseStart.Y), mw.MinHeight);
             }
             if (resizeFrom.HorizontalDirection == DH.L)
             {
                 mw.Left = resizeFrom.Left + (mouseMovedTo.X - resizeFrom.MouseStart.X);
-                mw.Width = resizeFrom.Width - (mouseMovedTo.X - resizeFrom.MouseStart.X);
+                mw.Width = Max(resizeFrom.Width - (mouseMovedTo.X - resizeFrom.MouseStart.X), mw.MinWidth);
             }
         }
 
