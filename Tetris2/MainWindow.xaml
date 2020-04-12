@@ -12,14 +12,14 @@
         Top="800" Left=" 1200"
         >
 
-    <WindowChrome.WindowChrome>
+    <!--<WindowChrome.WindowChrome>
         <WindowChrome 
         CaptionHeight="0"
         ResizeBorderThickness="{DynamicResource Border2_MWOuterBorder}" 
             />
-    </WindowChrome.WindowChrome>
-    
-    
+    </WindowChrome.WindowChrome>-->
+
+
     <Grid x:Name="gridMain" MinHeight="200" MinWidth="50">
         <Grid.RowDefinitions>
             <RowDefinition Height="{DynamicResource GridLength1_OuterBorder}"/>
@@ -40,7 +40,7 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Rectangle Fill="#FFF4F4F5" Grid.Column="1" Grid.Row="1" MouseDown="Rectangle_MouseDown"/>
-     
+
         <!--<Rectangle Fill="Transparent" Grid.Row="1" MouseEnter="Rectangle_MouseEnter" Grid.RowSpan="2"/>-->
         <!--<Grid Grid.Row="2" Grid.Column="1">-->
         <!--<ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" >-->
@@ -67,9 +67,10 @@
                 <DockPanel LastChildFill="False" Grid.Column="2" Grid.Row="3"/>
             </Grid>
         </Viewbox>
+        <TextBox x:Name="tbTest" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Grid.Column="1" Margin="10,10,0,0" Grid.Row="2"/>
         <!--<Border BorderThickness="{DynamicResource Border2_MWOuterBorder}" Grid.ColumnSpan="3" Grid.RowSpan="4"/>-->
         <!-- TAK NIC ^  -->
-        
+
         <!--</ScrollViewer>-->
 
         <!--<InkCanvas EditingMode="Select" Grid.RowSpan="2" Grid.ColumnSpan="2">

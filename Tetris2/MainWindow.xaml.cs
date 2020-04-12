@@ -20,10 +20,15 @@ namespace Tetris2
     /// </summary>
     public partial class MainWindow : Window
     {
+        public BorderBlinker borderBlinker;
+        private Monitoring monitoring;
+
         public MainWindow()
         {
             InitializeComponent();
-            BorderBlinker borderBlinker = new BorderBlinker(gridMain);
+            borderBlinker = new BorderBlinker(this);
+            monitoring = new Monitoring(this);
+            monitoring.Start();
         }
 
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
