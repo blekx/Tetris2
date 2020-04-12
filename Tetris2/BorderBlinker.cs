@@ -81,7 +81,7 @@ namespace Tetris2
                 currentlyResizing == true)
             {
                 currentlyResizing = false;
-                mouseHunterTimer.Stop();
+                //mouseHunterTimer.Stop();
             }
         }
 
@@ -158,7 +158,8 @@ namespace Tetris2
         {
             if (currentlyResizing)
             {
-                mouseHunterTimer.Start();
+                //mouseHunterTimer.Start();
+                ResizeWindow();
             }
             else
             {
