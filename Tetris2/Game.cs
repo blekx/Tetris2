@@ -37,9 +37,9 @@ namespace Tetris2
 
         public void HelloBlock()
         {
-            //Block b = BlockGenerator.NewBlock();
-            Block b = new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
-            AllFieldBlocks.Add(b);//BlockGenerator.NewBlock());
+            Block b = BlockGenerator.NewBlock();
+            //Block b = new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
+            AllFieldBlocks.Add(b);
         }
         public string ShowHelloBlock()
         {

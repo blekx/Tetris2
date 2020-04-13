@@ -11,7 +11,7 @@ namespace Tetris2
     {
         private static BlockPattern[] Patterns =
         {
-            new BlockPattern(0,1,1,"1"),
+            new BlockPattern(0,1,1,"1111"),
             new BlockPattern(1,3,3,"111010000" +
                                    "010011010" +
                                    "010111000" +
@@ -27,14 +27,14 @@ namespace Tetris2
 
         public static Block NewBlock()
         {
-            return new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
+            //return new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
             return  RotatedBlock(RandomDefaultBlock());
         }
 
         private static Block RandomDefaultBlock()
         {
             BlockPattern p = Patterns[random.Next(Patterns.Length)];
-            return null;//new Block(p.ID, p.X, p.Y, BlockColors[p.ID], p.Shape[0]);
+            return new Block(p.ID, p.X, p.Y, BlockColors[p.ID], p.Shape[0]);
         }
 
         private static Block RotatedBlock(Block b)
