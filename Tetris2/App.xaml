@@ -6,6 +6,7 @@
     <Application.Resources>
 
         <GridLength x:Key="GridLength1_OuterBorder">12</GridLength>
+        <GridLength x:Key="GridLength2_InterFieldBorder">10</GridLength>
         <Thickness x:Key="Border2_MWOuterBorder">5</Thickness>
 
     </Application.Resources>

@@ -63,8 +63,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Block.cs" />
+    <Compile Include="BlockGenerator.cs" />
+    <Compile Include="BlockPattern.cs" />
     <Compile Include="BorderBlinker.cs" />
     <Compile Include="BorderBlinkerStructs.cs" />
+    <Compile Include="Game.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -72,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Monitoring.cs" />
+    <Compile Include="Playground.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
