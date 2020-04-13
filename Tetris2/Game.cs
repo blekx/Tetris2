@@ -10,7 +10,7 @@ namespace Tetris2
 {
     public class Game
     {
-        private Image image;
+        public Image Image;
         private WriteableBitmap bitmap;
         public int DimensionX { get; private set; }
         public int DimensionY { get; private set; }
@@ -18,21 +18,50 @@ namespace Tetris2
         /// <summary>
         /// [0,0] = Left, Bottom
         /// </summary>
-        private bool[,] boolField;        
+        private bool[,] boolField;
         private List<Block> AllFieldBlocks = new List<Block>();
+        private List<Block> FallingBlocks = new List<Block>();
 
-        public Game(WriteableBitmap bitmap, int dimensionX, int dimensionY, double gravity)
+        //public Game(WriteableBitmap bitmap, int dimensionX, int dimensionY, double gravity)
+        public Game(Image image, int dimensionX, int dimensionY, double gravity)
         {
-            this.bitmap = bitmap;
+            //this.bitmap = bitmap;
+            Image = image;
             DimensionX = dimensionX;
             DimensionY = dimensionY;
             Gravity = gravity;
             boolField = new bool[DimensionX, DimensionY * 2];
         }
-        public Game(WriteableBitmap bitmap)
-            : this(bitmap, 10, 20, 1.5) { }
+        //public Game(WriteableBitmap bitmap)
+        //    : this(bitmap, 10, 20, 1.5) { }
+        //public Game(Image image)
+        //            : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
         public Game(Image image)
-                    : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
+               : this(image, 10, 20, 1.5) { }
+        //public Game(WriteableBitmap image)
+          //          : this((Image)image.Source, 10, 20, 1.5) { }
+
+        public void Update()
+        {
+            //CheckBlocks();
+            //CountFallingBlocks();
+            Redraw();
+        }
+
+        private void Redraw()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CountFallingBlocks()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void CheckBlocks()
+        {
+            throw new NotImplementedException();
+        }
 
         public void HelloBlock()
         {
@@ -44,6 +73,11 @@ namespace Tetris2
             AllFieldBlocks.Clear();
             HelloBlock();
             return AllFieldBlocks[0].ToString();
+        }
+
+        public Block GiveHelloBlock()
+        {
+            return AllFieldBlocks[0];
         }
     }
 }

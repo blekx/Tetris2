@@ -56,6 +56,7 @@ namespace Tetris2
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             tbTest2.Text = mainGame.ShowHelloBlock();
+            GameGrid.Children.Add(Painter.PaintBlock(mainGame.GiveHelloBlock()));
         }
     }
 }
