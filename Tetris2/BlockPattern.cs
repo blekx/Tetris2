@@ -5,13 +5,14 @@ namespace Tetris2
     public struct BlockPattern
     {
         public int ID;
+        public int Directions;
         public int X, Y;
         public bool[][,] Shape;
 
-
-        public BlockPattern(int iD, int x, int y, string shape)
+        public BlockPattern(int iD, int directions, int x, int y, string shape)
         {
             ID = iD;
+            Directions = directions;
             X = x;
             Y = y;
             Shape = new bool[4][,];

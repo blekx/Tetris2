@@ -43,6 +43,7 @@ namespace Tetris2
         }
         public string ShowHelloBlock()
         {
+            AllFieldBlocks.Clear();
             HelloBlock();
             return AllFieldBlocks[0].ToString();
         }

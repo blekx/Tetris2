@@ -50,5 +50,10 @@ namespace Tetris2
         {
             //throw new Exception("Border" + sender.ToString());// +BorderSystem.Windows.Shapes.Rectangle);
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            tbTest2.Text = mainGame.ShowHelloBlock();
+        }
     }
 }

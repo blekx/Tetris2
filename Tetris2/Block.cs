@@ -9,15 +9,19 @@ namespace Tetris2
     public class Block
     {
         public double CoordinatesX, CoordinatesY;
+        public int Direction;
         public int ShapeID { get; private set; }
         public int DimensionX { get; private set; }
         public int DimensionY { get; private set; }
         public bool[,] Shape;
+        public int Directions { get; private set; }
         public Color4B Color { get; private set; }
 
-        public Block(int shapeID, int dimensionX, int dimensionY, Color4B color, bool[,] shape)
+        public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, bool[,] shape)
         {
             ShapeID = shapeID;
+            Direction = direction;
+            Directions = directions;
             DimensionX = dimensionX;
             DimensionY = dimensionY;
             Color = color;
@@ -40,7 +44,9 @@ namespace Tetris2
             }
             return String.Format("X, Y: {0}, {1}", CoordinatesX, CoordinatesY)
            + Environment.NewLine + String.Format("Size: {0} * {1}", DimensionX, DimensionY)
-           + Environment.NewLine + String.Format("Shape ID, Color: {0}, {1}", ShapeID, Color)
+           + Environment.NewLine + String.Format("Color: {0}", Color)
+           + Environment.NewLine + "Shape ID, Direction (x of n):"
+           + Environment.NewLine + String.Format("{0}, ( {1} / {2} )", ShapeID, Direction, Directions)
            + Environment.NewLine + s;
         }
     }
