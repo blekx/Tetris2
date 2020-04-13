@@ -32,7 +32,10 @@ namespace Tetris2
             {
                 s += "Y" + y.ToString() + ": ";
                 for (int x = 0; x < DimensionX; x++)
-                    s += x.ToString() + ", ";
+                {
+                    //s += x.ToString() + ", ";
+                    s += Shape[x, y].ToString() + ", ";
+                }
                 if (y != 0) s += Environment.NewLine;
             }
             return String.Format("X, Y: {0}, {1}", CoordinatesX, CoordinatesY)
