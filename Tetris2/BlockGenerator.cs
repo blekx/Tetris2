@@ -11,23 +11,42 @@ namespace Tetris2
     {
         private static BlockPattern[] Patterns =
         {
-            new BlockPattern(0,1,1,1,"1111"),
-            new BlockPattern(1,4,3,3,"111010000" +
+            new BlockPattern(0,1,1,1,"1"),          // .
+            new BlockPattern(1,1,2,2,"1111"),       // 2x2
+            new BlockPattern(2,4,3,3,"111010000" +  // T
                                      "010011010" +
                                      "010111000" +
-                                     "010110010")
+                                     "010110010"),
+            new BlockPattern(3,2,3,3,"011110000" +  // Z
+                                     "010011001"),
+            new BlockPattern(4,2,3,3,"110011000" +  // S
+                                     "010110100"),
+            new BlockPattern(5,4,3,3,"011010010" +  // L
+                                     "100111000" +
+                                     "010010110" +
+                                     "111100000"),
+            new BlockPattern(6,4,3,3,"110010010" +  // (L)R
+                                     "111100000" +
+                                     "010010011" +
+                                     "001111000"),
+            new BlockPattern(7,2,4,4,"0010001000100010" + // I
+                                     "1111000000000000"),
         };
         private static Color4B[] BlockColors =
         {
-            new Color4B(100,100,100,255),
-            new Color4B(255,255,0,255),
-            new Color4B(0,0,255,255),
+            new Color4B(100,100,100,255), // Gr  .
+            new Color4B(255,127,0,255),   // O   2x2
+            new Color4B(40,40,255,255),   // B   T
+            new Color4B(0,255,255,255),   // C   Z
+            new Color4B(127,0,255,255),   // P   S
+            new Color4B(255,255,0,255),   // Y   L
+            new Color4B(255,0,127,255),   // M  (L)R
+            new Color4B(40,255,40,255),   // G   I
         };
         private static Random random = new Random();
 
         public static Block NewBlock()
         {
-            //return new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
             return RotatedBlock(RandomDefaultBlock());
         }
 
@@ -39,16 +58,13 @@ namespace Tetris2
 
         private static Block RotatedBlock(Block b)
         {
-            return RotateBlockSimply(b, random.Next(4));
+            return RotateBlockSimply(b, random.Next(b.Directions));
         }
 
         private static Block RotateBlockSimply(Block b, int intoPosition)
         {
-            //b.Shape=
             return new Block(b.ShapeID, intoPosition, b.Directions,
                 b.DimensionX, b.DimensionY, b.Color, Patterns[b.ShapeID].Shape[intoPosition]);
         }
-
-        //public static bool[,] String
     }
 }

@@ -15,14 +15,14 @@ namespace Tetris2
             Directions = directions;
             X = x;
             Y = y;
-            Shape = new bool[4][,];
-            for (int s = 0; s < 4; s++)
+            Shape = new bool[Directions][,];
+            for (int s = 0; s < Directions; s++)
                 Shape[s] = new bool[x, y];
-            for (int r = 0; r < 4; r++)
-                for (int i = 0; i < x; i++)
-                    for (int j = 0; j < y; j++)
+            for (int r = 0; r < Directions; r++)
+                for (int j = 0; j < y; j++)
+                    for (int i = 0; i < x; i++)
                     {
-                        Shape[r][i, j] = (shape[r * x * y + i * y + j] == '0') ? false : true;
+                        Shape[r][i, j] = (shape[r * x * y + j * y + i] == '0') ? false : true;
                     }
         }
     }

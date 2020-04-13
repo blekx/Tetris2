@@ -29,10 +29,12 @@ namespace Tetris2
             InitializeComponent();
             borderBlinker = new BorderBlinker(this);
             mainGame = new Game(ImageGameField);
-                      
+            
+            #region tests:
             monitoring = new Monitoring(this);
             monitoring.Start();
             tbTest2.Text = mainGame.ShowHelloBlock();
+            #endregion
         }
 
         private void Window_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -46,11 +48,11 @@ namespace Tetris2
                 this.DragMove();
         }
 
-        private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
-        {
-            //throw new Exception("Border" + sender.ToString());// +BorderSystem.Windows.Shapes.Rectangle);
-        }
-
+        /// <summary>
+        /// test2
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             tbTest2.Text = mainGame.ShowHelloBlock();

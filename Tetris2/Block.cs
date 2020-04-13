@@ -29,6 +29,17 @@ namespace Tetris2
             Shape = shape ?? throw new ArgumentNullException(nameof(shape));
         }
 
+        /// <summary>
+        /// Boolean to String
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        public string BTS(bool b)
+        {
+            if (b) return "W";
+            else return "....";
+        }
+
         public override string ToString()
         {
             string s = "";
@@ -37,8 +48,8 @@ namespace Tetris2
                 s += "Y" + y.ToString() + ": ";
                 for (int x = 0; x < DimensionX; x++)
                 {
-                    //s += x.ToString() + ", ";
-                    s += Shape[x, y].ToString() + ", ";
+                    //s += Shape[x, y].ToString() + ", ";
+                    s += BTS(Shape[x, y]) + ", ";
                 }
                 if (y != 0) s += Environment.NewLine;
             }
