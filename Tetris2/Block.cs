@@ -13,11 +13,11 @@ namespace Tetris2
         public int ShapeID { get; private set; }
         public int DimensionX { get; private set; }
         public int DimensionY { get; private set; }
-        public bool[,] Shape;
+        public int[,] Shape;
         public int Directions { get; private set; }
         public Color4B Color { get; private set; }
 
-        public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, bool[,] shape)
+        public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, int[,] shape)
         {
             ShapeID = shapeID;
             Direction = direction;
@@ -25,7 +25,7 @@ namespace Tetris2
             DimensionX = dimensionX;
             DimensionY = dimensionY;
             Color = color;
-            Shape = new bool[DimensionX, DimensionY];
+            Shape = new int[DimensionX, DimensionY];
             Shape = shape ?? throw new ArgumentNullException(nameof(shape));
         }
 

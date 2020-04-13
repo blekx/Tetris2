@@ -12,10 +12,14 @@ namespace Tetris2
         private static BlockPattern[] Patterns =
         {
             new BlockPattern(0,1,1,1,"1111"),
+            new BlockPattern(1,4,3,3,"123040000" +
+                                     "080056070" +
+                                     "010234000" +
+                                     "050670080"),
             new BlockPattern(1,4,3,3,"111010000" +
                                      "010011010" +
                                      "010111000" +
-                                     "010110010")
+                                     "010110010"),
         };
         private static Color4B[] BlockColors =
         {

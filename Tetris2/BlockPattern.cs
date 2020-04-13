@@ -7,7 +7,8 @@ namespace Tetris2
         public int ID;
         public int Directions;
         public int X, Y;
-        public bool[][,] Shape;
+        //public bool[][,] Shape;
+        public int[][,] Shape;
 
         public BlockPattern(int iD, int directions, int x, int y, string shape)
         {
@@ -15,14 +16,15 @@ namespace Tetris2
             Directions = directions;
             X = x;
             Y = y;
-            Shape = new bool[4][,];
+            Shape = new int[4][,];
             for (int s = 0; s < 4; s++)
-                Shape[s] = new bool[x, y];
+                Shape[s] = new int[x, y];
             for (int r = 0; r < 4; r++)
-                for (int i = 0; i < x; i++)
-                    for (int j = 0; j < y; j++)
+                for (int j = 0; j < y; j++)
+                    for (int i = 0; i < x; i++)
                     {
-                        Shape[r][i, j] = (shape[r * x * y + i * y + j] == '0') ? false : true;
+                        //Shape[r][i, j] = (shape[r * x * y + i * y + j] == '0') ? false : true;
+                        Shape[r][i, j] = Convert.ToInt32(shape[r * x * y + j * y + i].ToString());
                     }
         }
     }
