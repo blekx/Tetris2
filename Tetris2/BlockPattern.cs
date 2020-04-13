@@ -40,5 +40,10 @@ namespace Tetris2
             B = blue;
             A = alpha;
         }
+
+        public override string ToString()
+        {
+            return string.Format("RGBa( {0}, {1}, {2}, {3})", R, G, B, A);
+        }
     }
 }

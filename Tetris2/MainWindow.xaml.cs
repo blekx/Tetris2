@@ -29,9 +29,7 @@ namespace Tetris2
             InitializeComponent();
             borderBlinker = new BorderBlinker(this);
             mainGame = new Game(ImageGameField);
-            Block b = new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
-            tbTest2.Text = b.ToString();
-            
+                        
             monitoring = new Monitoring(this);
             monitoring.Start();
             tbTest2.Text = mainGame.ShowHelloBlock();

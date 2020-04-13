@@ -10,6 +10,7 @@ namespace Tetris2
 {
     public class Game
     {
+        private BlockGenerator blockGenerator = new BlockGenerator();
         private Image image;
         private WriteableBitmap bitmap;
         public int DimensionX { get; private set; }
@@ -37,9 +38,9 @@ namespace Tetris2
 
         public void HelloBlock()
         {
-            //Block b = BlockGenerator.NewBlock();
-            Block b = new Block(1, 2, 2, new Color4B(200, 0, 0, 255), new bool[2, 2] { { true, true }, { true, true } });
-            AllFieldBlocks.Add(b);//BlockGenerator.NewBlock());
+            Block b = blockGenerator.NewBlock();
+            //Block b = new Block(1, 2, 2, new Color4B(201, 0, 0, 255), new bool[2, 2] { { true, false }, { true, true } });
+            AllFieldBlocks.Add(b);
         }
         public string ShowHelloBlock()
         {
