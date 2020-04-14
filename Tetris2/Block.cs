@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Tetris2
 {
@@ -16,6 +17,7 @@ namespace Tetris2
         public bool[,] Shape;
         public int Directions { get; private set; }
         public Color4B Color { get; private set; }
+        public Canvas Canvas { get; private set; }
 
         public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, bool[,] shape)
         {
@@ -27,6 +29,11 @@ namespace Tetris2
             Color = color;
             Shape = new bool[DimensionX, DimensionY];
             Shape = shape ?? throw new ArgumentNullException(nameof(shape));
+        }
+
+        public void CreateVisual(Canvas c)
+        {
+            Canvas = c;
         }
 
         /// <summary>

@@ -28,7 +28,7 @@ namespace Tetris2
         {
             InitializeComponent();
             borderBlinker = new BorderBlinker(this);
-            mainGame = new Game(ImageGameField);
+            mainGame = new Game(ViewBoxGame1);
             
             #region tests:
             monitoring = new Monitoring(this);
