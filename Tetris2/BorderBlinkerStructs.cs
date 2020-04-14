@@ -27,6 +27,17 @@ namespace Tetris2
     }
 
     /// <summary>
+    /// Directions (Top, Right, Bottom, Left)
+    /// </summary>
+    public enum D4
+    {
+        T,
+        R,
+        B,
+        L,
+    }
+
+    /// <summary>
     /// Vertical Direction ( Top, Middle, Bottom )
     /// </summary>
     public enum DV

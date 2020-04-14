@@ -72,8 +72,8 @@
                 <!--</Viewbox>-->
                 <DockPanel LastChildFill="False" Grid.Column="2" Grid.Row="3"/>
                 <Image x:Name="ImageGameField" Grid.Column="1" Grid.Row="3"/>
-                <Grid x:Name="GameGrid" Grid.Column="1" Grid.Row="3"/>
                 <Rectangle x:Name="RImageGameField" Grid.Column="1" Grid.Row="3" Fill="Black"/>
+                <Grid x:Name="GameGrid" Grid.Column="1" Grid.Row="3"/>
                 <Rectangle x:Name="RImageIncoming" Grid.Column="1" Grid.Row="1" Fill="Black"/>
                 <Rectangle x:Name="RImageCorner" Grid.Column="3" Grid.Row="1" Fill="Black"/>
                 <Rectangle x:Name="RImageScores" Grid.Column="3" Grid.Row="3" Fill="Black"/>
