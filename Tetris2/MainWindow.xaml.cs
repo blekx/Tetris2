@@ -29,7 +29,7 @@ namespace Tetris2
             InitializeComponent();
             borderBlinker = new BorderBlinker(this);
             mainGame = new Game(ViewBoxGame1);
-            
+
             #region tests:
             monitoring = new Monitoring(this);
             monitoring.Start();
@@ -48,6 +48,9 @@ namespace Tetris2
                 this.DragMove();
         }
 
+        int i, j;
+        Random r = new Random();
+
         /// <summary>
         /// test2
         /// </summary>
@@ -56,7 +59,16 @@ namespace Tetris2
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             tbTest2.Text = mainGame.ShowHelloBlock();
-            GameGrid.Children.Add(Painter.PaintBlock(mainGame.GiveHelloBlock()));
+            Canvas c = Painter.PaintBlock(mainGame.GiveHelloBlock());
+            Grid.SetColumn(c, r.Next(5));// i);
+            Grid.SetRow(c, r.Next(5));// j);
+            i++;
+            j += 2;
+            if (i >= 5) i -= 5;
+            if (j >= 5) j -= 5;
+
+            (ViewBoxGame1.Child as Grid).Children.Add(c);
+            //GameGrid.Children.Add
         }
     }
 }

@@ -61,7 +61,7 @@ namespace Tetris2
 
             gameGrid = new Grid
             {
-                Width = Settings.blockResolution * (DimensionX + 4)
+                Width = Settings.blockResolution * (DimensionX + Settings.gameRightFrameWidth_Blocks)
                         + Settings.gameFrameWidth * 3
                         + Settings.gameFramePadding * 4,
                 Height = Settings.blockResolution * (DimensionY + Settings.gameUpperFrameHeight_Blocks)
@@ -76,49 +76,93 @@ namespace Tetris2
                     {
                         new GradientStop
                         {
-                            Color=                            Color.FromArgb(255,112,23,28),
-                            Offset=0.15,
+                            Color = Color.FromArgb(255,112,23,28),
+                            Offset = 0.15,
                         },
                         new GradientStop
                         {
-                            Color=                            Color.FromArgb(255,205,175,0),
-                            Offset=0.6,
+                            Color = Color.FromArgb(255,205,175,0),
+                            Offset = 0.6,
                         }
                     }
                 },
             };
-            gameGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new System.Windows.GridLength(Settings.gameFrameWidth, System.Windows.GridUnitType.Pixel) });
-            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
-            { Width = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.gameUpperFrameHeight_Blocks, System.Windows.GridUnitType.Pixel) });
-            gameGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new System.Windows.GridLength(Settings.gameFrameWidth, System.Windows.GridUnitType.Pixel) });
-            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
-            { Width = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionY, System.Windows.GridUnitType.Pixel) });
-            gameGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new System.Windows.GridLength(Settings.gameFrameWidth, System.Windows.GridUnitType.Pixel) });
-            //                                                                                          , System.Windows.GridUnitType.Pixel) });
-            gameGrid.RowDefinitions.Add(new RowDefinition { Height = new System.Windows.GridLength(Settings.gameFrameWidth) });
             gameGrid.RowDefinitions.Add(new RowDefinition
-            { Height = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionX) });
-            gameGrid.RowDefinitions.Add(new RowDefinition { Height = new System.Windows.GridLength(Settings.gameFrameWidth) });
-            gameGrid.RowDefinitions.Add(new RowDefinition
-            { Height = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.blockResolution * 4) });
-            gameGrid.RowDefinitions.Add(new RowDefinition { Height = new System.Windows.GridLength(Settings.gameFrameWidth) });
-
-            Rectangle background1 = new Rectangle
             {
-                Fill = new SolidColorBrush(Color.FromArgb(255, 0, 0, 0)),
-                Width = Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionX,
-                Height = Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionX,
-            };
-            gameGrid.Children.Add(background1);
-            Grid.SetColumn(background1, 1);
-            Grid.SetRow(background1, 3);
+                Height = new System.Windows.GridLength(Settings.gameFrameWidth, System.Windows.GridUnitType.Pixel)
+            });
+            gameGrid.RowDefinitions.Add(new RowDefinition
+            {
+                Height = new System.Windows.GridLength(
+                    Settings.gameFramePadding * 2 + Settings.blockResolution * Settings.gameUpperFrameHeight_Blocks)
+            });
+            gameGrid.RowDefinitions.Add(new RowDefinition
+            {
+                Height = new System.Windows.GridLength(Settings.gameFrameWidth, System.Windows.GridUnitType.Pixel)
+            });
+            gameGrid.RowDefinitions.Add(new RowDefinition
+            {
+                Height = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionY)
+            });
+            gameGrid.RowDefinitions.Add(new RowDefinition
+            {
+                Height = new System.Windows.GridLength(Settings.gameFrameWidth)
+            });
+
+            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width = new System.Windows.GridLength(Settings.gameFrameWidth)
+            });
+            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionX)
+            });
+            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width = new System.Windows.GridLength(Settings.gameFrameWidth)
+            });
+            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width = new System.Windows.GridLength(Settings.gameFramePadding * 2 + Settings.blockResolution * Settings.gameRightFrameWidth_Blocks)
+            });
+            gameGrid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width = new System.Windows.GridLength(Settings.gameFrameWidth)
+            });
+
+
+            Add4Backgrounds();           
+
             canvasPlayground = new Canvas();
             canvasPlayground.Background = new SolidColorBrush(Color.FromArgb(200, 0, 200, 255));
+            canvasPlayground.Margin = new System.Windows.Thickness(Settings.gameFramePadding);
             Grid.SetColumn(canvasPlayground, 1);
             Grid.SetRow(canvasPlayground, 3);
             gameGrid.Children.Add(canvasPlayground);
+           
+
 
             ParentControlElement.Child = gameGrid;
+        }
+
+        private void Add4Backgrounds()
+        {
+            Rectangle[] bg = new Rectangle[4];
+            for (int i = 0; i < 4; i++)
+            {
+                bg[i] = new Rectangle { Fill = Settings.backgroundBrush };
+                //Width = Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionX,
+                //Height = Settings.gameFramePadding * 2 + Settings.blockResolution * DimensionY,
+                gameGrid.Children.Add(bg[i]);
+            }
+            Grid.SetColumn(bg[0], 1);
+            Grid.SetColumn(bg[1], 3);
+            Grid.SetColumn(bg[2], 1);
+            Grid.SetColumn(bg[3], 3);
+            Grid.SetRow(bg[0], 3);
+            Grid.SetRow(bg[1], 3);
+            Grid.SetRow(bg[2], 1);
+            Grid.SetRow(bg[3], 1);
         }
 
         public void Update()
