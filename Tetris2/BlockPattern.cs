@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media;
 
 namespace Tetris2
 {
@@ -34,17 +35,27 @@ namespace Tetris2
         public byte B;
         public byte A;
 
-        public Color4B(byte red, byte green, byte blue, byte alpha)
+        public Color4B(byte alpha, byte red, byte green, byte blue)
         {
             R = red;
             G = green;
             B = blue;
             A = alpha;
         }
+        public Color4B(byte red, byte green, byte blue) : this(255, red, green, blue) { }
 
         public override string ToString()
         {
-            return string.Format("RGBa( {0}, {1}, {2}, {3})", R, G, B, A);
+            return (A == 255) ? string.Format("(a)RGB(___, {0:3}, {1:3}, {2:3})", R, G, B) : string.Format("(a)RGB({3:3}, {0:3}, {1:3}, {2:3})", R, G, B, A);
+        }
+
+        public static Color ToColor(Color4B c)
+        {
+            return Color.FromArgb(c.A, c.R, c.G, c.B);
+        }
+        public Color ToColor()
+        {
+            return Color.FromArgb(A,R, G, B);
         }
     }
 }

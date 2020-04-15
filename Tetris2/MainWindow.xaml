@@ -83,8 +83,9 @@
 
                 </Grid>
             </Viewbox>-->
-            
+
             <Viewbox x:Name="ViewBoxGame1"/>
+            <!--<Viewbox x:Name="ViewBoxGame2"/>-->
         </WrapPanel>
         <StackPanel HorizontalAlignment="Left"      VerticalAlignment="Top" 
                     Grid.Column="1" Grid.Row="3" Margin="10" Background="#FF9BE8FF">

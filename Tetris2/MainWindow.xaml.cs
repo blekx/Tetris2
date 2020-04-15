@@ -22,13 +22,15 @@ namespace Tetris2
     {
         public BorderBlinker borderBlinker;
         private Monitoring monitoring;
-        private Game mainGame;
+        //private Game mainGame;
+        public Game mainGame;
 
         public MainWindow()
         {
             InitializeComponent();
             borderBlinker = new BorderBlinker(this);
             mainGame = new Game(ViewBoxGame1);
+            //Game g2 = new Game(ViewBoxGame2);
 
             #region tests:
             monitoring = new Monitoring(this);

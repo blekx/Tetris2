@@ -25,7 +25,10 @@ namespace Tetris2
 
         private void Timer_Tick(object sender, EventArgs e)
         {
-            mw.tbTest.Text = mw.borderBlinker.Report();
+            mw.tbTest.Text = mw.borderBlinker.Report()
+                + Environment.NewLine + string.Format("{0},{1:0.000}",
+                mw.mainGame.nextGameUpdate.Second,
+                mw.mainGame.nextGameUpdate.Millisecond);
         }
 
         internal void Start()

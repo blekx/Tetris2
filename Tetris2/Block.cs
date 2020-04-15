@@ -29,11 +29,7 @@ namespace Tetris2
             Color = color;
             Shape = new bool[DimensionX, DimensionY];
             Shape = shape ?? throw new ArgumentNullException(nameof(shape));
-        }
-
-        public void CreateVisual(Canvas c)
-        {
-            Canvas = c;
+            this.Canvas = Painter.PaintBlock(this);
         }
 
         /// <summary>

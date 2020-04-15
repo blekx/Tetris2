@@ -37,6 +37,8 @@ namespace Tetris2
                         Canvas.SetLeft(r, x * resolution);
                         Canvas.SetTop(r, (b.DimensionY - 1 - y) * resolution);
                         c.Children.Add(r);
+                        c.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+                        c.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
 
 
                         //if (x == 0 || (x > 0 && b.Shape[x - 1, y] == false))

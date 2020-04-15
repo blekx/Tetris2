@@ -34,14 +34,14 @@ namespace Tetris2
         };
         private static Color4B[] BlockColors =
         {
-            new Color4B(100,100,100,255), // Gr  .
-            new Color4B(255,127,0,255),   // O   2x2
-            new Color4B(40,40,255,255),   // B   T
-            new Color4B(0,255,255,255),   // C   Z
-            new Color4B(127,0,255,255),   // P   S
-            new Color4B(255,255,0,255),   // Y   L
-            new Color4B(255,0,127,255),   // M  (L)R
-            new Color4B(40,255,40,255),   // G   I
+            new Color4B(100,100,100), // Gr  .
+            new Color4B(255,127,0),   // O   2x2
+            new Color4B(40,40,255),   // B   T
+            new Color4B(0,255,255),   // C   Z
+            new Color4B(127,0,255),   // P   S
+            new Color4B(255,255,0),   // Y   L
+            new Color4B(255,0,127),   // M  (L)R
+            new Color4B(40,255,40),   // G   I
         };
         private static Random random = new Random();
 
