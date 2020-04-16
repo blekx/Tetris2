@@ -9,31 +9,32 @@ namespace Tetris2
 {
     public static class BlockGenerator
     {
-        private static BlockPattern[] Patterns0 =
-        {
-            new BlockPattern(0,1,1,1,"1"),          // .
-            new BlockPattern(1,1,2,2,"1111"),       // 2x2
-            new BlockPattern(2,4,3,3,"111010000" +  // T
-                                     "010011010" +
-                                     "010111000" +
-                                     "010110010"),
-            new BlockPattern(3,2,3,3,"011110000" +  // Z
-                                     "010011001"),
-            new BlockPattern(4,2,3,3,"110011000" +  // S
-                                     "010110100"),
-            new BlockPattern(5,4,3,3,"011010010" +  // L
-                                     "100111000" +
-                                     "010010110" +
-                                     "111001000"),
-            new BlockPattern(6,4,3,3,"110010010" +  // (L)R
-                                     "111100000" +
-                                     "010010011" +
-                                     "001111000"),
-            new BlockPattern(7,2,4,4,"0010001000100010" + // I
-                                     "1111000000000000"),
-        };
+        //private static BlockPattern[] Patterns0 =
+        //{
+        //    new BlockPattern(0,1,1,1,"1"),          // .
+        //    new BlockPattern(1,1,2,2,"1111"),       // 2x2
+        //    new BlockPattern(2,4,3,3,"111010000" +  // T
+        //                             "010011010" +
+        //                             "010111000" +
+        //                             "010110010"),
+        //    new BlockPattern(3,2,3,3,"011110000" +  // Z
+        //                             "010011001"),
+        //    new BlockPattern(4,2,3,3,"110011000" +  // S
+        //                             "010110100"),
+        //    new BlockPattern(5,4,3,3,"011010010" +  // L
+        //                             "100111000" +
+        //                             "010010110" +
+        //                             "111001000"),
+        //    new BlockPattern(6,4,3,3,"110010010" +  // (L)R
+        //                             "111100000" +
+        //                             "010010011" +
+        //                             "001111000"),
+        //    new BlockPattern(7,2,4,4,"0010001000100010" + // I
+        //                             "1111000000000000"),
+        //};
+
         private static BlockPatternS[] Patterns =
-         {
+        {
             new BlockPatternS(0,1,1,1,"10"),          // .
             new BlockPatternS(1,1,2,2,"1111" +
                                       "0"),       // 2x2
@@ -62,6 +63,7 @@ namespace Tetris2
                                       "1111" +
                                       "20"),
         };
+
         private static Color4B[] BlockColors =
         {
             new Color4B(100,100,100), // Gr  .
@@ -77,7 +79,7 @@ namespace Tetris2
 
         public static Block NewBlockRandom()
         {
-            return new Block();
+            //return new Block();
             return RandomlyRotateBlock(NewBlockDefault());
         }
 
@@ -87,7 +89,7 @@ namespace Tetris2
         /// <returns></returns>
         public static Block NewBlockDefault()
         {
-            return new Block();
+            //return new Block();
 
             //BlockPattern p = Patterns[random.Next(1, Patterns.Length)];
             BlockPatternS p = Patterns[random.Next(1, Patterns.Length)];
@@ -96,7 +98,7 @@ namespace Tetris2
 
         public static Block RandomlyRotateBlock(Block b)
         {
-            return new Block();
+            //return new Block();
 
             return (RotateBlock(b, random.Next(b.Directions)));
         }
@@ -109,7 +111,7 @@ namespace Tetris2
         /// <returns></returns>
         public static Block RotateBlock(Block b, int rotations)
         {
-            return new Block();
+            //return new Block();
 
             int direction = b.Direction + rotations;
             while (direction < 0) { direction += b.Directions; }
@@ -119,11 +121,13 @@ namespace Tetris2
 
         private static Block RotateBlockSimply(Block b, int intoPosition)
         {
-            return new Block();
+            //return new Block();
 
             BlockPatternS p = Patterns[b.ShapeID];
             int previousOffset = b.RotationOffset;
-            Block result = new Block(p.ID, intoPosition, p.Directions, p.X, p.Y, BlockColors[p.ID], p.Shape[0], p.X_Offsets[intoPosition]);
+            int dimX = (intoPosition % 2 == 0) ? p.X : p.Y;
+            int dimY = (intoPosition % 2 == 0) ? p.Y : p.X;
+            Block result = new Block(p.ID, intoPosition, p.Directions, dimX, dimY, BlockColors[p.ID], p.Shape[intoPosition], p.X_Offsets[intoPosition]);
             result.CoordinatesX = b.CoordinatesX + result.RotationOffset - previousOffset;
             result.CoordinatesY = b.CoordinatesY;
             return result;
@@ -131,40 +135,40 @@ namespace Tetris2
             //    b.DimensionX, b.DimensionY, b.Color, Patterns[b.ShapeID].Shape[intoPosition]);
         }
 
-        /// <summary>
-        /// not proven------------------------------------
-        /// </summary>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public static Block CutBlock(Block b)
-        {
-            int minX = b.DimensionX;
-            int minY = b.DimensionY;
-            int maxX = 0;
-            int maxY = 0;
-            for (int i = 0; i < b.DimensionX; i++)
-                for (int j = 0; j < b.DimensionY; j++)
-                {
-                    if (b.Shape[i, j])
-                    {
-                        if (i < minX) minX = i;
-                        if (j < minY) minY = j;
-                        if (i > maxX) maxX = i;
-                        if (j > maxY) maxY = j;
-                    }
-                }
-            int dimX = maxX - minX + 1;
-            int dimY = maxY - minY + 1;
-            bool[,] newShape = new bool[dimX, dimY];
-            for (int i = 0; i < dimX; i++)
-                for (int j = 0; j < dimY; j++)
-                {
-                    newShape[i, j] = b.Shape[i + minX, j + minY];
-                }
-            Block result = new Block(b.ShapeID, b.Direction, b.Directions, dimX, dimY, BlockColors[b.ShapeID], newShape);
-            result.CoordinatesX = b.CoordinatesX + minX;
-            result.CoordinatesY = b.CoordinatesY + minY;
-            return result;
-        }
+        //    /// <summary>
+        //    /// not proven------------------------------------
+        //    /// </summary>
+        //    /// <param name="b"></param>
+        //    /// <returns></returns>
+        //    public static Block CutBlock(Block b)
+        //    {
+        //        int minX = b.DimensionX;
+        //        int minY = b.DimensionY;
+        //        int maxX = 0;
+        //        int maxY = 0;
+        //        for (int i = 0; i < b.DimensionX; i++)
+        //            for (int j = 0; j < b.DimensionY; j++)
+        //            {
+        //                if (b.Shape[i, j])
+        //                {
+        //                    if (i < minX) minX = i;
+        //                    if (j < minY) minY = j;
+        //                    if (i > maxX) maxX = i;
+        //                    if (j > maxY) maxY = j;
+        //                }
+        //            }
+        //        int dimX = maxX - minX + 1;
+        //        int dimY = maxY - minY + 1;
+        //        bool[,] newShape = new bool[dimX, dimY];
+        //        for (int i = 0; i < dimX; i++)
+        //            for (int j = 0; j < dimY; j++)
+        //            {
+        //                newShape[i, j] = b.Shape[i + minX, j + minY];
+        //            }
+        //        Block result = new Block(b.ShapeID, b.Direction, b.Directions, dimX, dimY, BlockColors[b.ShapeID], newShape);
+        //        result.CoordinatesX = b.CoordinatesX + minX;
+        //        result.CoordinatesY = b.CoordinatesY + minY;
+        //        return result;
+        //}
     }
 }

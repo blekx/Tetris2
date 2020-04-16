@@ -38,7 +38,11 @@ namespace Tetris2
 
         private void SwapXY()
         //{ int c = a; a = b; b = c; }
-        { int c = X; X = Y; Y = c; }
+        {
+            int c = X;
+            X = Y;
+            Y = c;
+        }
 
         public BlockPatternS(int iD, int directions, int x, int y, string shape)
         {
@@ -52,16 +56,19 @@ namespace Tetris2
             {
                 Shape[s] = new bool[X, Y];
                 SwapXY();
-                X_Offsets[s] = Convert.ToInt32(shape[Directions * x * y + s]);
+                string offset = shape[Directions * x * y + s].ToString();
+                X_Offsets[s] = Convert.ToInt32(offset);
             }
             if (Directions % 2 == 1) SwapXY();
             for (int r = 0; r < Directions; r++)
             {
                 for (int j = 0; j < Y; j++)
+                {
                     for (int i = 0; i < X; i++)
                     {
-                        Shape[r][i, j] = (shape[r * x * y + j * Y + i] == '0') ? false : true;
+                        Shape[r][i, j] = (shape[r * x * y + j * X + i] == '0') ? false : true;
                     }
+                }
                 SwapXY();
             }
         }

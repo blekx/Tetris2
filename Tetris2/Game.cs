@@ -70,16 +70,11 @@ namespace Tetris2
             }
         }
 
-        //public Game(WriteableBitmap bitmap)
-        //    : this(bitmap, 10, 20, 1.5) { }
         //public Game(Image image)
         //            : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
         public Game(object parentControl)
-               : this(parentControl, 10, 20, 1) { }
-        public Game(Image image)
-               : this(image, 10, 20, 1) { }
-        //public Game(WriteableBitmap image)
-        //          : this((Image)image.Source, 10, 20, 1.5) { }
+               : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, 1) { }
+
 
         private void CreateOwnEnvironment()
         {
@@ -220,11 +215,7 @@ namespace Tetris2
 
         private void Redraw()
         {
-            foreach (Block b in blocksToRedraw)
-            {
-                b.Canvas.Margin = new System.Windows.Thickness(
-                    Settings.blockResolution * b.CoordinatesX, 0, 0, Settings.blockResolution * b.CoordinatesY);
-            }
+            foreach (Block b in blocksToRedraw) SetPropperPosition(b);
             blocksToRedraw.Clear();
         }
 
@@ -238,10 +229,24 @@ namespace Tetris2
             throw new NotImplementedException();
         }
 
+        private void SetPropperPosition(Block b)
+        {
+            b.Canvas.Margin = new System.Windows.Thickness(
+                    Settings.blockResolution * b.CoordinatesX, 0, 0, Settings.blockResolution * b.CoordinatesY);
+        }
+
         private void ThrowIntoField(Block b)
         {
             preparedBlocks.Add(BlockGenerator.NewBlockDefault());
+
             Block nb = BlockGenerator.RandomlyRotateBlock(b);
+            nb.CoordinatesX = DimensionX / 2 - nb.DimensionX/2 + nb.RotationOffset;
+            nb.CoordinatesY = DimensionY - nb.DimensionY;
+            Grid.SetColumn(nb.Canvas, 1);
+            Grid.SetRow(nb.Canvas, 3);
+            SetPropperPosition(nb);
+            gameGrid.Children.Add(nb.Canvas);
+
             //Block nb = BlockGenerator.CutBlock(b);
             allFieldBlocks.Add(nb);
             fallingBlocks.Add(nb);
@@ -251,15 +256,15 @@ namespace Tetris2
 
         public void HelloBlock()
         {
-            //while (preparedBlocks.Count <= Settings.preparedBlocks)
-            for (int i = preparedBlocks.Count; i < Settings.preparedBlocks; i++)
+            while (preparedBlocks.Count <= Settings.preparedBlocks)
+            //for (int i = preparedBlocks.Count; i < Settings.preparedBlocks; i++)
             {
-                Block b = BlockGenerator.NewBlockRandom();
-                preparedBlocks.Add(b);
-                //preparedBlocks.Add(new Block());
+                //Block b = BlockGenerator.NewBlockRandom();
+                //preparedBlocks.Add(b);
+                ////preparedBlocks.Add(new Block());
 
                 // original only:
-                //preparedBlocks.Add(BlockGenerator.NewBlockRandom());
+                preparedBlocks.Add(BlockGenerator.NewBlockRandom());
             }
             ThrowIntoField(preparedBlocks[0]);
         }

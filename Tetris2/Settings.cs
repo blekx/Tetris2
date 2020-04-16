@@ -12,6 +12,8 @@ namespace Tetris2
     {
         // Game Grid
         public static int blockResolution = 10;
+        public static int gameFieldX = 10;
+        public static int gameFieldY = 24;
         public static int gameFrameWidth = 5;
         public static int gameFramePadding = 3;
         public static int gameUpperFrameHeight_Blocks = 3;
