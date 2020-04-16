@@ -18,8 +18,15 @@ namespace Tetris2
         public int Directions { get; private set; }
         public Color4B Color { get; private set; }
         public Canvas Canvas { get; private set; }
+        public int RotationOffset;
 
-        public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, bool[,] shape)
+        public Block()
+            : this(0, 0, 1, 1, 1, new Color4B(200, 200, 200), new bool[1, 1] { { true } })
+        { }
+        public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, bool[,] shape) 
+           : this(shapeID, direction, directions, dimensionX, dimensionY, color, shape, 0)
+        { }
+        public Block(int shapeID, int direction, int directions, int dimensionX, int dimensionY, Color4B color, bool[,] shape, int offset)
         {
             ShapeID = shapeID;
             Direction = direction;

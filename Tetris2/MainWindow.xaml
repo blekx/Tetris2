@@ -92,6 +92,7 @@
             <TextBlock x:Name="tbTest" HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox"
                  VerticalAlignment="Top" Grid.Column="1" Margin="10" Grid.Row="3"/>
             <Button Content="Test2" Click="Button_Click" />
+            <Button Content="Test3" Click="Button_test3"  />
             <TextBlock x:Name="tbTest2" TextWrapping="Wrap" Text="TextBlock"/>
         </StackPanel>
         <!--<Border BorderThickness="{DynamicResource Border2_MWOuterBorder}" Grid.ColumnSpan="3" Grid.RowSpan="4"/>-->

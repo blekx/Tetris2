@@ -25,6 +25,7 @@ namespace Tetris2
         public static double radialGradient_o1 = 0.15;
         public static double radialGradient_o2 = 0.6;
         public static double maxIgnoredLatency_ratioFromTick = 0.2;
+        public static int preparedBlocks = 3;
 
 
         public static string TicksToReadable(long t)

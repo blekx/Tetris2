@@ -26,6 +26,7 @@ namespace Tetris2
         private List<Block> allFieldBlocks = new List<Block>();
         private List<Block> fallingBlocks = new List<Block>();
         private List<Block> blocksToRedraw = new List<Block>();
+        private List<Block> preparedBlocks = new List<Block>();
 
         public Viewbox ParentControlElement { get; private set; }
         //private Viewbox parent;
@@ -138,13 +139,14 @@ namespace Tetris2
         #endregion
 
         private void HelperTextOut() => HelperTextOut("nGU: " + Settings.TicksToReadable(nextGameUpdate.Ticks));
-        private void HelperTextOut(string s)
+        public void HelperTextOut(string s)
         {
             TextBlock tb = new TextBlock
             {
                 Text = s,
                 Background = new SolidColorBrush(Colors.White),
                 Foreground = new SolidColorBrush(Colors.DarkBlue),
+                TextWrapping = TextWrapping.Wrap,
             };
             (ParentControlElement.Child as Grid).Children.Add(tb);
             Grid.SetColumn(tb, 1);
@@ -161,7 +163,6 @@ namespace Tetris2
                     ? now.AddMilliseconds(Tick_ms - maxIgnoredLatency)
                     : nextGameUpdate.AddMilliseconds(Tick_ms);
             }
-            HelperTextOut();
         }
 
         //private void GameTimer_Tick_tests(object sender, EventArgs e)
@@ -237,10 +238,30 @@ namespace Tetris2
             throw new NotImplementedException();
         }
 
+        private void ThrowIntoField(Block b)
+        {
+            preparedBlocks.Add(BlockGenerator.NewBlockDefault());
+            Block nb = BlockGenerator.RandomlyRotateBlock(b);
+            //Block nb = BlockGenerator.CutBlock(b);
+            allFieldBlocks.Add(nb);
+            fallingBlocks.Add(nb);
+            blocksToRedraw.Add(nb);
+            preparedBlocks.Remove(b);
+        }
+
         public void HelloBlock()
         {
-            Block b = BlockGenerator.NewBlock();
-            allFieldBlocks.Add(b);
+            //while (preparedBlocks.Count <= Settings.preparedBlocks)
+            for (int i = preparedBlocks.Count; i < Settings.preparedBlocks; i++)
+            {
+                Block b = BlockGenerator.NewBlockRandom();
+                preparedBlocks.Add(b);
+                //preparedBlocks.Add(new Block());
+
+                // original only:
+                //preparedBlocks.Add(BlockGenerator.NewBlockRandom());
+            }
+            ThrowIntoField(preparedBlocks[0]);
         }
         public string ShowHelloBlock()
         {

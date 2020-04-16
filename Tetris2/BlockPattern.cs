@@ -28,6 +28,45 @@ namespace Tetris2
         }
     }
 
+    public struct BlockPatternS
+    {
+        public int ID;
+        public int Directions;
+        public int X, Y;
+        public bool[][,] Shape;
+        public int[] X_Offsets;
+
+        private void SwapXY()
+        //{ int c = a; a = b; b = c; }
+        { int c = X; X = Y; Y = c; }
+
+        public BlockPatternS(int iD, int directions, int x, int y, string shape)
+        {
+            ID = iD;
+            Directions = directions;
+            X = x;
+            Y = y;
+            Shape = new bool[Directions][,];
+            X_Offsets = new int[Directions];
+            for (int s = 0; s < Directions; s++)
+            {
+                Shape[s] = new bool[X, Y];
+                SwapXY();
+                X_Offsets[s] = Convert.ToInt32(shape[Directions * x * y + s]);
+            }
+            if (Directions % 2 == 1) SwapXY();
+            for (int r = 0; r < Directions; r++)
+            {
+                for (int j = 0; j < Y; j++)
+                    for (int i = 0; i < X; i++)
+                    {
+                        Shape[r][i, j] = (shape[r * x * y + j * Y + i] == '0') ? false : true;
+                    }
+                SwapXY();
+            }
+        }
+    }
+
     public struct Color4B
     {
         public byte R;
@@ -55,7 +94,7 @@ namespace Tetris2
         }
         public Color ToColor()
         {
-            return Color.FromArgb(A,R, G, B);
+            return Color.FromArgb(A, R, G, B);
         }
     }
 }

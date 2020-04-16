@@ -53,6 +53,14 @@ namespace Tetris2
         int i, j;
         Random r = new Random();
 
+        private void Button_test3(object sender, RoutedEventArgs e)
+        {
+            string s = "";
+            for (int i = -10; i <= 10; i++)
+                s += i.ToString() + ":" + (i % 4).ToString() + ",";
+            mainGame.HelperTextOut(s);
+        }
+
         /// <summary>
         /// test2
         /// </summary>
