@@ -40,7 +40,7 @@ namespace Tetris2
                         c.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
                         c.VerticalAlignment = System.Windows.VerticalAlignment.Bottom;
 
-
+                        #region Old code - Preview:
                         //if (x == 0 || (x > 0 && b.Shape[x - 1, y] == false))
                         //{//Left
                         //    Rectangle border = new Rectangle
@@ -89,7 +89,7 @@ namespace Tetris2
                         //    Canvas.SetTop(border, (b.DimensionY - 1 - y) * resolution + resolution - borderWidth);
                         //    c.Children.Add(border);
                         //}
-
+                        #endregion
                         //Left:
                         if (x == 0) AddEdge(b, c, D4.L, x, y);
                         else if (b.Shape[x - 1, y] == false) AddEdge(b, c, D4.L, x, y);

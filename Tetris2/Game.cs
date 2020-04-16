@@ -133,6 +133,7 @@ namespace Tetris2
         }
         #endregion
 
+        #region Helpers: ( WriteLN: HelperTextOut(string s) )
         private void HelperTextOut() => HelperTextOut("nGU: " + Settings.TicksToReadable(nextGameUpdate.Ticks));
         public void HelperTextOut(string s)
         {
@@ -147,6 +148,7 @@ namespace Tetris2
             Grid.SetColumn(tb, 1);
             Grid.SetRow(tb, 3);
         }
+        #endregion
 
         private void GameTimer_Tick(object sender, EventArgs e)
         {
@@ -159,52 +161,6 @@ namespace Tetris2
                     : nextGameUpdate.AddMilliseconds(Tick_ms);
             }
         }
-
-        //private void GameTimer_Tick_tests(object sender, EventArgs e)
-        //{
-        //    //bool itIsTime = false;
-        //    if (nextGameUpdate.Ticks < DateTime.Now.Ticks)
-        //    //itIsTime = true;
-        //    //if (itIsTime)
-        //    {
-        //        /*
-        //        Update();
-        //        DateTime now = DateTime.Now;
-        //        long t = nextGameUpdate.Ticks + 10000 * (Tick_ms + maxIgnoredLatency);
-        //        nextGameUpdate = t < now.Ticks
-        //            //? now.Subtract(new TimeSpan(0, 0, 0, 0, maxIgnoredLatency))
-        //            ? now.AddMilliseconds(-maxIgnoredLatency)
-        //            : nextGameUpdate.AddMilliseconds(Tick_ms);
-        //        */
-        //        //Tick_ms = 1000;
-        //        //maxIgnoredLatency = 3;
-        //        Update();
-        //        DateTime now = DateTime.Now;
-        //        long o = nextGameUpdate.Ticks;
-        //        long n = now.Ticks;
-        //        long t = nextGameUpdate.Ticks + 10000 * (Tick_ms - Tick_ms + maxIgnoredLatency);
-        //        long m = now.Ticks - t;
-        //        nextGameUpdate = 0 < now.Ticks - t
-        //        //? now.Subtract(new TimeSpan(0, 0, 0, 0, maxIgnoredLatency))
-        //            ? now.AddMilliseconds(Tick_ms - maxIgnoredLatency)
-        //            : nextGameUpdate.AddMilliseconds(Tick_ms);
-        //        TextBlock tb = new TextBlock
-        //        {
-        //            //Text = (nextGameUpdate.Ticks % 1000000000).ToString(),
-        //            Text = "nGU: " + Settings.TicksToReadable(o) +
-        //            Environment.NewLine + "now: " + Settings.TicksToReadable(n) +
-        //            Environment.NewLine + "t--:  " + Settings.TicksToReadable(t) +
-        //            Environment.NewLine + "n-t:  " + Settings.TicksToReadable(m) +
-        //            Environment.NewLine + "nGU: " + Settings.TicksToReadable(nextGameUpdate.Ticks),
-        //            Background = new SolidColorBrush(Colors.White),
-        //            Foreground = new SolidColorBrush(Colors.DarkBlue),
-        //        };
-        //        (ParentControlElement.Child as Grid).Children.Add(tb);
-        //        Grid.SetColumn(tb, 1);
-        //        Grid.SetRow(tb, 3);
-        //        //MessageBox.Show((nextGameUpdate.Ticks % 1000000000).ToString());
-        //    }
-        //}
 
         private void Update()
         {
@@ -257,14 +213,8 @@ namespace Tetris2
         public void HelloBlock()
         {
             while (preparedBlocks.Count <= Settings.preparedBlocks)
-            //for (int i = preparedBlocks.Count; i < Settings.preparedBlocks; i++)
-            {
-                //Block b = BlockGenerator.NewBlockRandom();
-                //preparedBlocks.Add(b);
-                ////preparedBlocks.Add(new Block());
-
-                // original only:
-                preparedBlocks.Add(BlockGenerator.NewBlockRandom());
+            {             
+                preparedBlocks.Add(BlockGenerator.NewBlockRandomOrientation());
             }
             ThrowIntoField(preparedBlocks[0]);
         }

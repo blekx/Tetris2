@@ -99,7 +99,7 @@ namespace Tetris2
             mw.tbTest.Text = Report();
         }
 
-        private double Max(double d1,double d2)
+        private double Max(double d1, double d2)
         {
             if (d2 > d1) return d2;
             else return d1;
@@ -146,7 +146,7 @@ namespace Tetris2
         }
 
         ///// <summary>
-        ///// doesnt work out of window
+        ///// doesnt work outside of window
         ///// </summary>
         ///// <returns></returns>
         //private Point GetMousePosition()
@@ -163,30 +163,14 @@ namespace Tetris2
 
         private void Border_MouseLeave(object r, EventArgs e)//MouseButtonEventArgs e)
         {
-            if (currentlyResizing)
-            {
-                mouseHunterTimer.Start();
-            }
-            else
-            {
-                ((Rectangle)r).Fill = colorTransparent;
-            }
+            if (currentlyResizing)          mouseHunterTimer.Start();           
+            else   ((Rectangle)r).Fill = colorTransparent;           
         }
 
-        //private void PaintActive(Rectangle r)//, System.EventArgs e)
         private void Border_MouseEnter(object r, EventArgs e)
         {
-            if (currentlyResizing)
-            {
-                //mouseHunterTimer.Stop();
-                ResizeWindow();
-            }
-            else
-            {
-                ((Rectangle)r).Fill = borderColor;
-            }
-            //throw new Exception(((Rectangle)r).ToString());
-            //MessageBox.Show(((Rectangle)r).Name);
+            if (currentlyResizing) ResizeWindow();
+            else ((Rectangle)r).Fill = borderColor;
         }
 
         internal string Report()

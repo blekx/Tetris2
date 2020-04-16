@@ -78,7 +78,6 @@
   <ItemGroup>
     <Compile Include="Monitoring.cs" />
     <Compile Include="Painter.cs" />
-    <Compile Include="Playground.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

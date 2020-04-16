@@ -3,31 +3,6 @@ using System.Windows.Media;
 
 namespace Tetris2
 {
-    public struct BlockPattern
-    {
-        public int ID;
-        public int Directions;
-        public int X, Y;
-        public bool[][,] Shape;
-
-        public BlockPattern(int iD, int directions, int x, int y, string shape)
-        {
-            ID = iD;
-            Directions = directions;
-            X = x;
-            Y = y;
-            Shape = new bool[Directions][,];
-            for (int s = 0; s < Directions; s++)
-                Shape[s] = new bool[x, y];
-            for (int r = 0; r < Directions; r++)
-                for (int j = 0; j < y; j++)
-                    for (int i = 0; i < x; i++)
-                    {
-                        Shape[r][i, j] = (shape[r * x * y + j * y + i] == '0') ? false : true;
-                    }
-        }
-    }
-
     public struct BlockPatternS
     {
         public int ID;
@@ -37,12 +12,7 @@ namespace Tetris2
         public int[] X_Offsets;
 
         private void SwapXY()
-        //{ int c = a; a = b; b = c; }
-        {
-            int c = X;
-            X = Y;
-            Y = c;
-        }
+        { int c = X; X = Y; Y = c; }
 
         public BlockPatternS(int iD, int directions, int x, int y, string shape)
         {
@@ -63,12 +33,8 @@ namespace Tetris2
             for (int r = 0; r < Directions; r++)
             {
                 for (int j = 0; j < Y; j++)
-                {
                     for (int i = 0; i < X; i++)
-                    {
                         Shape[r][i, j] = (shape[r * x * y + j * X + i] == '0') ? false : true;
-                    }
-                }
                 SwapXY();
             }
         }

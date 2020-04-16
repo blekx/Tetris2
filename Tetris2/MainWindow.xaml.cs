@@ -51,6 +51,7 @@ namespace Tetris2
                 this.DragMove();
         }
 
+        #region Tests:
         int i, j;
         Random r = new Random();
 
@@ -62,11 +63,7 @@ namespace Tetris2
             mainGame.HelperTextOut(s);
         }
 
-        /// <summary>
-        /// test2
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <summary> test2   </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             tbTest2.Text = mainGame.ShowHelloBlock();
@@ -81,5 +78,6 @@ namespace Tetris2
             (ViewBoxGame1.Child as Grid).Children.Add(c);
             //GameGrid.Children.Add
         }
+        #endregion
     }
 }
