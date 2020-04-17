@@ -20,13 +20,15 @@ namespace Tetris2
         private int Tick_ms;
         private int maxIgnoredLatency;
         /// <summary>
-        /// [0,0] = Left, Bottom
+        /// [0,0] = Left, Bottom;  False=Free
         /// </summary>
         private bool[,] boolField;
         private List<Block> allFieldBlocks = new List<Block>();
         private List<Block> fallingBlocks = new List<Block>();
+        private List<Block> nomore_fallingBlocks = new List<Block>();
         private List<Block> blocksToRedraw = new List<Block>();
         private List<Block> preparedBlocks = new List<Block>();
+        private Block activeBlock;
 
         public Viewbox ParentControlElement { get; private set; }
         //private Viewbox parent;
@@ -73,7 +75,7 @@ namespace Tetris2
         //public Game(Image image)
         //            : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
         public Game(object parentControl)
-               : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, 1) { }
+               : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, Settings.gameDefaultGravity) { }
 
 
         private void CreateOwnEnvironment()
@@ -148,6 +150,11 @@ namespace Tetris2
             Grid.SetColumn(tb, 1);
             Grid.SetRow(tb, 3);
         }
+
+        public string WriteBoolField()
+        {
+            return Settings.BoolfieldToString(boolField);
+        }
         #endregion
 
         private void GameTimer_Tick(object sender, EventArgs e)
@@ -164,31 +171,90 @@ namespace Tetris2
 
         private void Update()
         {
-            //CheckBlocks();
-            //CountFallingBlocks();
+            CountFallingBlocks(fallingBlocks);
+            CheckBlocks(fallingBlocks);
             Redraw();
         }
 
         private void Redraw()
         {
-            foreach (Block b in blocksToRedraw) SetPropperPosition(b);
+            foreach (Block b in blocksToRedraw)
+            {
+                SetPropperPosition(b);
+                ProjectIntoBoolField(b);
+            }
             blocksToRedraw.Clear();
         }
 
-        private void CountFallingBlocks()
+        private void CountFallingBlocks(List<Block> blocks)
         {
-            throw new NotImplementedException();
+            foreach (Block b in blocks)
+            {//version with one fall per tick
+                RemoveFromBoolField(b);
+                b.CoordinatesY -= 1;
+                blocksToRedraw.Add(b);
+            }
         }
 
-        private void CheckBlocks()
+        /// <summary>
+        /// Corrects if Falling blocks already landed.
+        /// </summary>
+        /// <param name="blocks"></param>
+        private void CheckBlocks(List<Block> blocks)
         {
-            throw new NotImplementedException();
+            List<Block> blocksToStop = new List<Block>();
+            foreach (Block b in blocks)
+            {
+                for (int x = 0; x < b.DimensionX; x++)
+                {
+                    int y = 0;
+                    while (b.Shape[x, y] == false) y++;
+                    double requiredFreeY = b.CoordinatesY + y;
+                    if ((int)requiredFreeY == requiredFreeY) requiredFreeY -= 1;
+                    int reqY = (int)requiredFreeY;
+                    if (reqY >= 0)
+                        if (!boolField[x + (int)b.CoordinatesX, reqY]) continue;
+                        else
+                        {
+                            blocksToStop.Add(b);
+                            //StopBlock(b);
+                            break;
+                        }
+                    else
+                    {
+                        blocksToStop.Add(b);
+                        //StopBlock(b);
+                        break;
+                    }
+                }
+                ProjectIntoBoolField(b);
+            }
+            StopBlocks(blocksToStop);
+            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
         }
+
+        private void StopBlocks(Block b) => StopBlocks(new List<Block> { b });
+        private void StopBlocks(List<Block> blocks)
+        {
+            foreach (Block b in blocks)
+            {
+                if ((int)b.CoordinatesY != b.CoordinatesY)
+                    b.CoordinatesY = (int)b.CoordinatesY + 1;
+                nomore_fallingBlocks.Add(b);
+                if (b == activeBlock)
+                {
+                    ThrowIntoField(preparedBlocks[0]);
+                }
+            }
+        }
+
+        private void CheckBlocks(Block b) => CheckBlocks(new List<Block> { b });
 
         private void SetPropperPosition(Block b)
         {
             b.Canvas.Margin = new System.Windows.Thickness(
-                    Settings.blockResolution * b.CoordinatesX, 0, 0, Settings.blockResolution * b.CoordinatesY);
+                    Settings.gameFramePadding + Settings.blockResolution * b.CoordinatesX, 0, 0,
+                    Settings.gameFramePadding + Settings.blockResolution * b.CoordinatesY);
         }
 
         private void ThrowIntoField(Block b)
@@ -196,7 +262,7 @@ namespace Tetris2
             preparedBlocks.Add(BlockGenerator.NewBlockDefault());
 
             Block nb = BlockGenerator.RandomlyRotateBlock(b);
-            nb.CoordinatesX = DimensionX / 2 - nb.DimensionX/2 + nb.RotationOffset;
+            nb.CoordinatesX = DimensionX / 2 - nb.DimensionX / 2 + nb.RotationOffset;
             nb.CoordinatesY = DimensionY - nb.DimensionY;
             Grid.SetColumn(nb.Canvas, 1);
             Grid.SetRow(nb.Canvas, 3);
@@ -206,14 +272,32 @@ namespace Tetris2
             //Block nb = BlockGenerator.CutBlock(b);
             allFieldBlocks.Add(nb);
             fallingBlocks.Add(nb);
+            ProjectIntoBoolField(nb);
             blocksToRedraw.Add(nb);
+            activeBlock = nb;
             preparedBlocks.Remove(b);
+        }
+
+        private void ProjectIntoBoolField(Block b)
+        {
+            for (int x = 0; x < b.DimensionX; x++)
+                for (int y = 0; y < b.DimensionY; y++)
+                    if (b.Shape[x, y])
+                        boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = true;
+        }
+
+        private void RemoveFromBoolField(Block b)
+        {
+            for (int x = 0; x < b.DimensionX; x++)
+                for (int y = 0; y < b.DimensionY; y++)
+                    if (b.Shape[x, y])
+                        boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = false;
         }
 
         public void HelloBlock()
         {
             while (preparedBlocks.Count <= Settings.preparedBlocks)
-            {             
+            {
                 preparedBlocks.Add(BlockGenerator.NewBlockRandomOrientation());
             }
             ThrowIntoField(preparedBlocks[0]);

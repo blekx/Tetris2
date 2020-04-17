@@ -11,7 +11,7 @@ namespace Tetris2
     {
         private MainWindow mw;
         private DispatcherTimer timer;
-        private double frequency = 3; //Hz
+        private double frequency = 10; //Hz
 
         public Monitoring(MainWindow mainWindow)
         {
@@ -29,6 +29,7 @@ namespace Tetris2
                 + Environment.NewLine + string.Format("{0},{1:0.000}",
                 mw.mainGame.nextGameUpdate.Second,
                 mw.mainGame.nextGameUpdate.Millisecond);
+            mw.tbGamefield.Text = mw.mainGame.WriteBoolField();
         }
 
         internal void Start()

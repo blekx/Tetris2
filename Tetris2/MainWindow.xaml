@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tetris2"
         mc:Ignorable="d"
         
-        Title="MainWindow" Height="400" Width="800"
+        Title="MainWindow" Height="500" Width="1000"
         MouseDoubleClick="Window_MouseDoubleClick"
         Background="Transparent" AllowsTransparency="True" WindowStyle="None"
         MinWidth="260" MinHeight="370"
@@ -39,6 +39,8 @@
         <WrapPanel Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
              
             <Viewbox x:Name="ViewBoxGame1"/>
+            
+            <TextBlock x:Name="tbGamefield" TextWrapping="Wrap" Text="T" Background="Gray"/>
             <!--<Viewbox x:Name="ViewBoxGame2"/>-->
         </WrapPanel>
         

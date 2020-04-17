@@ -58,7 +58,7 @@ namespace Tetris2
 
         public override string ToString()
         {
-            return (A == 255) ? string.Format("(a)RGB(___, {0:3}, {1:3}, {2:3})", R, G, B) : string.Format("(a)RGB({3:3}, {0:3}, {1:3}, {2:3})", R, G, B, A);
+            return (A == 255) ? string.Format("(a)RGB(___, {0:D3}, {1:D3}, {2:D3})", R, G, B) : string.Format("(a)RGB({3:3}, {0:3}, {1:3}, {2:3})", R, G, B, A);
         }
 
         public static Color ToColor(Color4B c)

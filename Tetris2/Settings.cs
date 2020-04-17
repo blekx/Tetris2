@@ -12,6 +12,7 @@ namespace Tetris2
     {
         // Game Grid
         public static int blockResolution = 10;
+        public static int gameDefaultGravity = 2;
         public static int gameFieldX = 10;
         public static int gameFieldY = 24;
         public static int gameFrameWidth = 5;
@@ -34,6 +35,22 @@ namespace Tetris2
         {
             //return string.Format("{0:00,000.00}ms {1:0000}", (double)(t % 1000000000) / 10000, t % 10000);
             return string.Format("{0:00,000.00}ms", (double)(t % 1000000000) / 10000);
+        }
+
+        public static string BoolfieldToString(bool[,] b)
+        {
+            string s = "";
+            string result = "";
+            string t = "▓▓ ";
+            string f = "░░ ";
+            for (int y = b.GetLength(1) / 2; y > -1; y--)
+            {
+                s = "Y" + y.ToString() + ": ";
+                for (int x = 0; x < b.GetLength(0); x++)
+                    s += (b[x, y]) ? t : f;
+                result += s + Environment.NewLine;
+            }
+            return result;
         }
     }
 }
