@@ -14,9 +14,13 @@ namespace Tetris2
 {
     public class Game
     {
+        public bool IsGameSmooth_NotTicking { get; private set; }
         public int DimensionX { get; private set; }
         public int DimensionY { get; private set; }
-        private double gravity;
+        /// <summary>rather Velocity of active block while TICKING </summary>
+        private double gravity_T;
+        /// <summary>More realistic gravity, used for SMOOTH movement </summary>
+        private double gravity_S;
         private int Tick_ms;
         private int maxIgnoredLatency;
         /// <summary>
@@ -29,6 +33,7 @@ namespace Tetris2
         private List<Block> blocksToRedraw = new List<Block>();
         private List<Block> preparedBlocks = new List<Block>();
         private Block activeBlock;
+
 
         public Viewbox ParentControlElement { get; private set; }
         //private Viewbox parent;
@@ -50,6 +55,7 @@ namespace Tetris2
         {
             //this.bitmap = bitmap;
             //Image = image;
+            IsGameSmooth_NotTicking = Settings.isGameSmooth_NotTicking;
             ParentControlElement = parentControl as Viewbox;
             DimensionX = dimensionX;
             DimensionY = dimensionY;
@@ -61,13 +67,15 @@ namespace Tetris2
             gameTimer.Tick += new EventHandler(GameTimer_Tick);
             gameTimer.Start();
         }
+
         public double Gravity
         {
-            get => gravity;
+            get => gravity_T;
             private set
             {
-                gravity = value;
-                Tick_ms = (int)(1000 / gravity);
+                gravity_T = value;
+                gravity_S = value * Settings.g_TickingToSmooth_coef;
+                Tick_ms = (int)(1000 / gravity_T);
                 maxIgnoredLatency = (int)(Tick_ms * Settings.maxIgnoredLatency_ratioFromTick);
             }
         }
@@ -75,7 +83,7 @@ namespace Tetris2
         //public Game(Image image)
         //            : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
         public Game(object parentControl)
-               : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, Settings.gameDefaultGravity) { }
+               : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, Settings.gameDefaultGravity_T) { }
 
 
         private void CreateOwnEnvironment()
@@ -159,19 +167,30 @@ namespace Tetris2
 
         private void GameTimer_Tick(object sender, EventArgs e)
         {
-            if (nextGameUpdate.Ticks < DateTime.Now.Ticks)
+            if (IsGameSmooth_NotTicking)
             {
-                Update();
-                DateTime now = DateTime.Now;
-                nextGameUpdate = nextGameUpdate.Ticks + 10000 * maxIgnoredLatency < now.Ticks
-                    ? now.AddMilliseconds(Tick_ms - maxIgnoredLatency)
-                    : nextGameUpdate.AddMilliseconds(Tick_ms);
+
+            }
+            else
+            {
+                if (nextGameUpdate.Ticks < DateTime.Now.Ticks)
+                {
+                    Update();
+                    DateTime now = DateTime.Now;
+                    nextGameUpdate = nextGameUpdate.Ticks + 10000 * maxIgnoredLatency < now.Ticks
+                        ? now.AddMilliseconds(Tick_ms - maxIgnoredLatency)
+                        : nextGameUpdate.AddMilliseconds(Tick_ms);
+                }
             }
         }
 
         private void Update()
         {
-            CountFallingBlocks(fallingBlocks);
+            if (IsGameSmooth_NotTicking)
+                CountFallingBlocksSmoothly(fallingBlocks);
+            else
+                CountFallingBlocks_TickingVersion(fallingBlocks);
+
             CheckBlocks(fallingBlocks);
             Redraw();
         }
@@ -186,7 +205,7 @@ namespace Tetris2
             blocksToRedraw.Clear();
         }
 
-        private void CountFallingBlocks(List<Block> blocks)
+        private void CountFallingBlocks_TickingVersion(List<Block> blocks)
         {
             foreach (Block b in blocks)
             {//version with one fall per tick
@@ -196,10 +215,57 @@ namespace Tetris2
             }
         }
 
-        /// <summary>
-        /// Corrects if Falling blocks already landed.
-        /// </summary>
-        /// <param name="blocks"></param>
+        private void CountFallingBlocksSmoothly(List<Block> blocks)
+        {
+            foreach (Block b in blocks)
+            {//version with one fall per tick
+                RemoveFromBoolField(b);
+                b.CoordinatesY -= 1;
+                blocksToRedraw.Add(b);
+            }
+        }
+
+        /// <summary> Corrects if Falling blocks already landed. </summary>
+        private void CheckBlocks_Old(List<Block> blocks)
+        {
+            List<Block> blocksToStop = new List<Block>();
+            foreach (Block b in blocks)
+            {
+                for (int x = 0; x < b.DimensionX; x++)
+                {
+                    // v1: for homogenous blocks only:
+                    //int y = 0;
+                    //while (b.Shape[x, y] == false) y++;
+                    // v2: for any blocks, replaced by this FOR-IF loop:
+                    for (int y = 0; y < b.DimensionY; y++)
+                        if (b.Shape[x, y])
+                        {
+                            double requiredFreeY = b.CoordinatesY + y;
+                            if ((int)requiredFreeY == requiredFreeY) requiredFreeY -= 1;
+                            int reqY = (int)requiredFreeY;
+                            if (reqY >= 0)
+                                if (!boolField[x + (int)b.CoordinatesX, reqY]) continue;
+                                else
+                                {
+                                    blocksToStop.Add(b);
+                                    //StopBlock(b);
+                                    break;
+                                }
+                            else
+                            {
+                                blocksToStop.Add(b);
+                                //StopBlock(b);
+                                break;
+                            }
+                        }
+                }
+                ProjectIntoBoolField(b);
+            }
+            StopBlocks(blocksToStop);
+            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
+        }
+
+        /// <summary> Corrects if Falling blocks already landed. </summary>
         private void CheckBlocks(List<Block> blocks)
         {
             List<Block> blocksToStop = new List<Block>();
@@ -207,30 +273,77 @@ namespace Tetris2
             {
                 for (int x = 0; x < b.DimensionX; x++)
                 {
-                    int y = 0;
-                    while (b.Shape[x, y] == false) y++;
-                    double requiredFreeY = b.CoordinatesY + y;
-                    if ((int)requiredFreeY == requiredFreeY) requiredFreeY -= 1;
-                    int reqY = (int)requiredFreeY;
-                    if (reqY >= 0)
-                        if (!boolField[x + (int)b.CoordinatesX, reqY]) continue;
-                        else
+                    // v1: for homogenous blocks only:
+                    //int y = 0;
+                    //while (b.Shape[x, y] == false) y++;
+                    // v2: for any blocks, replaced by this FOR-IF loop:
+                    for (int y = 0; y < b.DimensionY; y++)
+                        if (b.Shape[x, y])
                         {
-                            blocksToStop.Add(b);
-                            //StopBlock(b);
-                            break;
+                            double requiredFreeY = b.CoordinatesY + y;
+                            if ((int)requiredFreeY == requiredFreeY) requiredFreeY -= 1;
+                            int reqY = (int)requiredFreeY;
+                            if (reqY >= 0)
+                                if (!boolField[x + (int)b.CoordinatesX, reqY]) continue;
+                                else
+                                {
+                                    blocksToStop.Add(b);
+                                    //StopBlock(b);
+                                    break;
+                                }
+                            else
+                            {
+                                blocksToStop.Add(b);
+                                //StopBlock(b);
+                                break;
+                            }
                         }
-                    else
-                    {
-                        blocksToStop.Add(b);
-                        //StopBlock(b);
-                        break;
-                    }
                 }
                 ProjectIntoBoolField(b);
             }
             StopBlocks(blocksToStop);
             foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
+        }
+
+        private bool IsSpace(Block b, D4 direction)
+        {
+            int xOff = 0, yOff = 0;
+            bool result = true;
+            switch (direction)
+            {
+                case D4.T:
+                    yOff = 1;
+                    if ((int)(b.CoordinatesY) + b.DimensionY >= DimensionY - 1) result = false;
+                    break;
+                case D4.B:
+                    yOff = -1;
+                    if ((int)(b.CoordinatesY) <= 0) result = false;
+                    break;
+                case D4.L:
+                    xOff = -1;
+                    if ((int)(b.CoordinatesX) <= 0) result = false;
+                    break;
+                case D4.R:
+                    xOff = 1;
+                    if ((int)(b.CoordinatesX) + b.DimensionX >= DimensionX - 1) result = false;
+                    break;
+                default: break;
+            }
+            if (!result) return result;
+            // edge collision was fixed ^
+            // block collision:
+            for (int x = 0; x < b.DimensionX; x++)
+            {
+                for (int y = 0; y < b.DimensionY; y++)
+                    if (b.Shape[x, y])
+                        if (boolField[(int)(b.CoordinatesX) + x + xOff, (int)(b.CoordinatesY) + y + yOff])
+                        {
+                            result = false;
+                            break;
+                        }
+                if (!result) break;
+            }
+            return result;
         }
 
         private void StopBlocks(Block b) => StopBlocks(new List<Block> { b });
@@ -294,6 +407,12 @@ namespace Tetris2
                         boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = false;
         }
 
+        internal void Lef()
+        {
+            throw new NotImplementedException();
+        }
+
+        #region tests
         public void HelloBlock()
         {
             while (preparedBlocks.Count <= Settings.preparedBlocks)
@@ -313,5 +432,6 @@ namespace Tetris2
         {
             return allFieldBlocks[0];
         }
+        #endregion
     }
 }

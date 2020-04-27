@@ -9,7 +9,6 @@ namespace Tetris2
 {
     public class Block
     {
-        public double CoordinatesX, CoordinatesY;
         public int Direction;
         public int ShapeID { get; private set; }
         public int DimensionX { get; private set; }
@@ -19,6 +18,11 @@ namespace Tetris2
         public Color4B Color { get; private set; }
         public Canvas Canvas { get; private set; }
         public int RotationOffset;
+
+        public double CoordinatesX, CoordinatesY;
+        public DateTime CoordinatesT;
+        public double CoordinatesV;
+        public int ab_ghostCoordX;
 
         public Block()
             : this(0, 0, 1, 1, 1, new Color4B(200, 200, 200), new bool[1, 1] { { true } })

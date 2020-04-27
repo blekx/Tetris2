@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Tetris2
@@ -12,7 +13,10 @@ namespace Tetris2
     {
         // Game Grid
         public static int blockResolution = 10;
-        public static int gameDefaultGravity = 2;
+        public static double gameDefaultGravity_T = 2;
+        public static bool isGameSmooth_NotTicking = true;
+        public static double g_TickingToSmooth_coef = 4;
+        public static int defaultTimetoSidestep_ms = 100;
         public static int gameFieldX = 10;
         public static int gameFieldY = 24;
         public static int gameFrameWidth = 5;
@@ -29,6 +33,13 @@ namespace Tetris2
         public static double radialGradient_o2 = 0.6;
         public static double maxIgnoredLatency_ratioFromTick = 0.2;
         public static int preparedBlocks = 3;
+
+        public static Key player1_Left = Key.Left;
+        public static Key player1_Right = Key.Right;
+        public static Key player1_LandBlock = Key.Space;
+        public static Key player1_RotateRight = Key.D;
+        public static Key player1_RotateLeft = Key.A;
+        public static Key player1_RotateTwice = Key.S;
 
 
         public static string TicksToReadable(long t)

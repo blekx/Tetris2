@@ -24,6 +24,7 @@ namespace Tetris2
         private Monitoring monitoring;
         //private Game mainGame;
         public Game mainGame;
+        private KeyboardManager keyManager;
 
         public MainWindow()
         {
@@ -31,6 +32,7 @@ namespace Tetris2
             
             borderBlinker = new BorderBlinker(this);
             mainGame = new Game(ViewBoxGame1);
+            keyManager = new KeyboardManager(this);
 
             #region tests:
             //Game g2 = new Game(ViewBoxGame2);
@@ -49,6 +51,18 @@ namespace Tetris2
         {
             if (e.ChangedButton == MouseButton.Left)
                 this.DragMove();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            //var x = e.Key;
+            //MessageBox.Show(x.ToString());
+            keyManager.AddEvent(e.Key, true, e.Timestamp);
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+
         }
 
         #region Tests:

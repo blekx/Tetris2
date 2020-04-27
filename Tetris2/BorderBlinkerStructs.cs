@@ -57,6 +57,9 @@ namespace Tetris2
         R,
     }
 
+    /// <summary>
+    /// a struct for BorderBlinker
+    /// </summary>
     public struct ResizeWindowStartingParameters
     {
         public double Left, Top, Width, Height;
@@ -65,7 +68,7 @@ namespace Tetris2
         public Point MouseStart;
 
         /// <summary>
-        /// 
+        /// (constructor of) a struct for BorderBlinker
         /// </summary>
         /// <param name="mw"></param>
         /// <param name="directions">rectangleTL</param>
@@ -91,5 +94,10 @@ namespace Tetris2
                 + Environment.NewLine + String.Format("vert, hor: {0}, {1}", VerticalDirection.ToString(), HorizontalDirection.ToString())
                 + Environment.NewLine + String.Format("mouse X, Y: {0}, {1}", MouseStart.X, MouseStart.Y);
         }
+    }
+
+    public struct KeyHappened
+    {
+
     }
 }

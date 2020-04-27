@@ -11,7 +11,7 @@
         Background="Transparent" AllowsTransparency="True" WindowStyle="None"
         MinWidth="260" MinHeight="370"
         
-        WindowStartupLocation="CenterScreen"
+        WindowStartupLocation="CenterScreen" KeyDown="Window_KeyDown" KeyUp="Window_KeyUp"
         >
         <!--Top="800" Left=" 1200"-->
 
