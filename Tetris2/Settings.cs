@@ -11,12 +11,22 @@ namespace Tetris2
 {
     public static class Settings
     {
-        // Game Grid
-        public static int blockResolution = 10;
+        // Game Fyzix (physics)
+        // default units: square lenght, second
+        public static int gameTimerSpeed_ms = 30;
+        public static int gameMaxLag_ms = 5 * gameTimerSpeed_ms;
         public static double gameDefaultGravity_T = 2;
         public static bool isGameSmooth_NotTicking = true;
         public static double g_TickingToSmooth_coef = 4;
+        public static double gameSpeedHoriz_PerTick = 0.1;
+        public static double gameSpeedHoriz_LastFewSteps = 5;
+        public static double gameSpeedHoriz_TotalTicks = 10;
+        public static double gameAB_HorizAcceleration = 15;
+        public static double gameAB_HorizDecceleration = 30;
         public static int defaultTimetoSidestep_ms = 100;
+
+        // Game Grid
+        public static int blockResolution = 10;
         public static int gameFieldX = 10;
         public static int gameFieldY = 24;
         public static int gameFrameWidth = 5;
@@ -34,13 +44,13 @@ namespace Tetris2
         public static double maxIgnoredLatency_ratioFromTick = 0.2;
         public static int preparedBlocks = 3;
 
+        // Key controls
         public static Key player1_Left = Key.Left;
         public static Key player1_Right = Key.Right;
         public static Key player1_LandBlock = Key.Space;
         public static Key player1_RotateRight = Key.D;
         public static Key player1_RotateLeft = Key.A;
         public static Key player1_RotateTwice = Key.S;
-
 
         public static string TicksToReadable(long t)
         {

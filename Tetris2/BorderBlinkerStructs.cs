@@ -27,7 +27,7 @@ namespace Tetris2
     }
 
     /// <summary>
-    /// Directions (Top, Right, Bottom, Left)
+    /// Directions (Top, Right, Bottom, Left, zerO movement)
     /// </summary>
     public enum D4
     {
@@ -35,6 +35,7 @@ namespace Tetris2
         R,
         B,
         L,
+        O,
     }
 
     /// <summary>
