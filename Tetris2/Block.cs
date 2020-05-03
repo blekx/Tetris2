@@ -24,6 +24,8 @@ namespace Tetris2
         public double CoordinatesV;
         public int ab_ghostCoordX;
 
+        public double fallingDistance_Helper;
+
         public Block()
             : this(0, 0, 1, 1, 1, new Color4B(200, 200, 200), new bool[1, 1] { { true } })
         { }

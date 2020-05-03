@@ -14,7 +14,8 @@ namespace Tetris2
 {
     public class Game
     {
-        /// <summary> IsGameSmooth_NotTicking        /// </summary>
+        #region field
+        /// <summary> IsGameSmooth_NotTicking  </summary>
         public bool Smooth { get; private set; }
         public int DimensionX { get; private set; }
         public int DimensionY { get; private set; }
@@ -24,17 +25,19 @@ namespace Tetris2
         private double gravity_S;
         private int Tick_ms;
         private int maxIgnoredLatency;
-        /// <summary>
-        /// [0,0] = Left, Bottom;  False=Free
-        /// </summary>
+        /// <summary> [0,0] = Left, Bottom;  False = Free </summary>
         private bool[,] boolField;
         private List<Block> allFieldBlocks = new List<Block>();
+        private List<Block> groupToFallTogether = new List<Block>();
         private List<Block> fallingBlocks = new List<Block>();
         private List<Block> nomore_fallingBlocks = new List<Block>();
         private List<Block> blocksToRedraw = new List<Block>();
         private List<Block> preparedBlocks = new List<Block>();
         private Block activeBlock;
+        private bool willThrowANewBlock = false;
         private double activeBlock_vX = 0;
+        private double fallingGroup_vY = 0;
+        private bool deactivated = false;
 
 
         public Viewbox ParentControlElement { get; private set; }
@@ -45,11 +48,11 @@ namespace Tetris2
         private Canvas canvasRight;
 
         private DispatcherTimer gameTimer;
-        /// <summary>
-        /// sheduled, unreal value
-        /// </summary>
+        /// <summary> sheduled, unreal value </summary>
         //private DateTime nextGameUpdate = DateTime.Now;
         public DateTime nextGameUpdate = DateTime.Now;
+
+        #endregion
 
         #region Constructing
         //public Game(WriteableBitmap bitmap, int dimensionX, int dimensionY, double gravity)
@@ -64,8 +67,8 @@ namespace Tetris2
             Gravity = gravity;
             boolField = new bool[DimensionX, DimensionY * 2];
             CreateOwnEnvironment();
-            gameTimer = new DispatcherTimer();
-            gameTimer.Interval = new TimeSpan(0, 0, 0, 0, Settings.gameTimerSpeed_ms);
+            gameTimer = new DispatcherTimer(DispatcherPriority.Send);
+            gameTimer.Interval = new TimeSpan(0, 0, 0, 0, Settings.gameTimerInterval_ms);
             gameTimer.Tick += new EventHandler(GameTimer_Tick);
             gameTimer.Start();
         }
@@ -157,7 +160,7 @@ namespace Tetris2
                 TextWrapping = TextWrapping.Wrap,
             };
             (ParentControlElement.Child as Grid).Children.Add(tb);
-            Grid.SetColumn(tb, 1);
+            Grid.SetColumn(tb, 3);
             Grid.SetRow(tb, 3);
         }
 
@@ -184,22 +187,42 @@ namespace Tetris2
         private void Update()
         {
             DateTime t = DateTime.Now;
-            CountFallingBlockHorizontally(t);
-            if (Smooth) CountFallingBlocksSmoothly(fallingBlocks, t);
-            else CountFallingBlocks_TickingVersion(fallingBlocks);
+            CountActiveBlockHorizontally(t);
 
-            CheckBlocks(fallingBlocks);
-            Redraw();
+            TestSuspiciousBlocksOnStartFalling(t);
+
+            if (Smooth) CountFallingBlocksSmoothly(fallingBlocks, t); else CountFallingBlocks_TickingVersion(fallingBlocks);
+
+            CheckLanding(fallingBlocks);
+            RedrawOnce();
+
+            if (willThrowANewBlock && !deactivated) ThrowIntoField(preparedBlocks[0]);
+            //HelperTextOut(activeBlock.fallingDistance_Helper.ToString("0.000") + Environment.NewLine + activeBlock.CoordinatesV.ToString()
+            //+ Environment.NewLine + c.ToString());
         }
 
-        private void Redraw()
+        private void TestSuspiciousBlocksOnStartFalling(DateTime t)
         {
-            foreach (Block b in blocksToRedraw)
+            List<Block> theyWillFall = new List<Block>();
+            List<Block> theyWont = new List<Block>();
+            bool doTest = true;
+            while (doTest)
             {
-                SetPropperPosition(b);
-                ProjectIntoBoolField(b);
+                doTest = false;
+                foreach (Block b in groupToFallTogether)
+                    if (IsSpace(b, D4.B))
+                    {
+                        theyWillFall.Add(b);
+                        doTest = true;
+                    }
+                    else theyWont.Add(b);
+                foreach (Block b in theyWillFall)
+                {
+                    groupToFallTogether.Remove(b);
+                    fallingBlocks.Add(b);
+                }
+                //CountFallingBlocksSmoothly(theyWillFall, t);
             }
-            blocksToRedraw.Clear();
         }
 
         private void CountFallingBlocks_TickingVersion(List<Block> blocks)
@@ -216,48 +239,97 @@ namespace Tetris2
         {
             foreach (Block b in blocks)
             {
-                double dt = t.Subtract(b.CoordinatesT).TotalSeconds;
-                if (dt * 1000 > Settings.gameMaxLag_ms) dt = 0.001 * Settings.gameMaxLag_ms;
                 RemoveFromBoolField(b);
-                b.CoordinatesY -= b.CoordinatesV * dt + 1 / 2 * gravity_S * dt * dt;
+                double dt = Count_dt(b, t);
+                double fallingDistance = b.CoordinatesV * dt + 0.5 * gravity_S * dt * dt;
+                b.fallingDistance_Helper = fallingDistance;
+                if (fallingDistance > 1) fallingDistance = 1;
+                b.CoordinatesY -= fallingDistance;
                 b.CoordinatesV += dt * gravity_S;
                 b.CoordinatesT = t;
                 blocksToRedraw.Add(b);
+                //ProjectIntoBoolField(b);
             }
         }
 
-        private void CountFallingBlockHorizontally(DateTime t)
+
+        private void CountActiveBlockHorizontally(DateTime t)
         {
-            //double dx = activeBlock.ab_ghostCoordX - activeBlock.CoordinatesX;
-            //    if (Math.Abs(dx) > Settings.gameSpeedHoriz_LastFewSteps * Settings.gameSpeedHoriz_PerTick)
-            //        activeBlock.CoordinatesX += dx / Settings.gameSpeedHoriz_TotalTicks;
-            //    else
-            //        activeBlock.CoordinatesX+=
-
+            int limitationWay = 2;
             double s = activeBlock.ab_ghostCoordX - activeBlock.CoordinatesX;
-            if (s == 0)
-                activeBlock_vX = 0;
-            else
-            {
-                ///<summary> direction right</summary>
-                double dirR = (activeBlock.CoordinatesX < activeBlock.ab_ghostCoordX) ? 1 : -1;
-                double dt = t.Subtract(activeBlock.CoordinatesT).TotalSeconds;
-                if (dt * 1000 > Settings.gameMaxLag_ms) dt = 0.001 * Settings.gameMaxLag_ms;
-                /// part 2: deccelerating part of the horizontal movement 
-                double t2 = Math.Abs(activeBlock_vX) / Settings.gameAB_HorizDecceleration;
-                double s2 = activeBlock_vX * 1 / 2 * t2;
-                if (Math.Abs(s) <= Math.Abs(s2))
-                {// move, slowing down
 
-                    double speedDecrement = dt * Settings.gameAB_HorizDecceleration;
-                    //wrong yet ^ need to count it
-                    speedDecrement = dt * 1 / 2 / s * activeBlock_vX * activeBlock_vX;
+            /// maxBrakingDistanceInLastTimerTick
+            double s2m = 0.5 * Settings.gameAB_HorizDecceleration * Math.Pow(Settings.gameTimerInterval_ms / 1000.0, 2);
+            /// maxVelocityToBrakeInLastTimerTick
+            double v2m = Settings.gameTimerInterval_ms / 1000.0 * Settings.gameAB_HorizDecceleration;
+            ///<summary> direction right</summary>
+            double dirR = (activeBlock.CoordinatesX < activeBlock.ab_ghostCoordX) ? 1 : -1;
+            double dt = Count_dt(activeBlock, t);
+
+            if (Math.Abs(s) < s2m && activeBlock_vX < v2m)
+            {//finish, stop it!
+                activeBlock_vX = 0;
+                activeBlock.CoordinatesX = activeBlock.ab_ghostCoordX;
+            }
+            else if (dirR * activeBlock_vX < 0)
+            {//moving into opposite side
+                double speedIncrement = dirR * dt * Settings.gameAB_HorizDecceleration * Settings.gameAB_HorAgressivenessOfStopping;
+                if (Math.Abs(speedIncrement) > Math.Abs(activeBlock_vX))
+                {// only slowly = will be stopped
+                    activeBlock.CoordinatesX += 0.5 * activeBlock_vX * dt;
+                    activeBlock_vX = 0;
+                }
+                else
+                {// faster movement into a wrong side
+                    activeBlock.CoordinatesX += 0.5 * (activeBlock_vX + speedIncrement) * dt;
+                    activeBlock_vX += speedIncrement;
+                }
+            }
+            else
+            {//moving correctly
+                /// part "2" = Theoretical deccelerating part of the horizontal movement 
+                /// minimal required
+                /// Time
+                double t2 = Math.Abs(activeBlock_vX) / Settings.gameAB_HorizDecceleration;
+                /// and Distance
+                /// to stop naturally
+                double s2 = activeBlock_vX * 1 / 2 * t2;
+
+                if (limitationWay == 1)
+                {
+                    if (Math.Abs(s) <= Math.Abs(s2) * Settings.gameAB_HorAgressivenessOfStopping)
+                    {//too close to stop normally
+                        if (Math.Abs(activeBlock_vX) < 0.1)
+                        {//case "Hard Hit"
+                            activeBlock_vX = 0;
+                            activeBlock.CoordinatesX = activeBlock.ab_ghostCoordX;
+                        }
+                        else
+                        {//case "just very excessive speed"
+                            activeBlock_vX /= Settings.gameAB_HorAgressivenessOfStopping;
+                        }
+                        return;
+                    }
+                }
+
+                if (Math.Abs(s) <= Math.Abs(s2))
+                {// movement too fast, slowing down
+
+                    double natural_speedDecrement = dt * Settings.gameAB_HorizDecceleration;
+                    // ^ only a wrong theory yet ^ , we actually need to count it:
+                    double speedDecrement = dt * 1 / 2 / Math.Abs(s) * activeBlock_vX * activeBlock_vX;
+
+                    if (limitationWay == 2)
+                    {// Will not slow down extremely, rather will stop too late and return back
+                        if (speedDecrement > natural_speedDecrement * Settings.gameAB_HorAgressivenessOfStopping)
+                            speedDecrement = natural_speedDecrement * Settings.gameAB_HorAgressivenessOfStopping;
+                    }
 
                     activeBlock.CoordinatesX += activeBlock_vX * dt - dirR * dt * speedDecrement / 2;
                     activeBlock_vX -= dirR * speedDecrement;
                 }
                 else
-                {
+                {// movement too slow, accelerating
                     activeBlock.CoordinatesX += activeBlock_vX * dt +
                         dirR * dt * dt * Settings.gameAB_HorizAcceleration / 2;
                     activeBlock_vX += dirR * dt * Settings.gameAB_HorizAcceleration;
@@ -305,28 +377,41 @@ namespace Tetris2
                             }
                         }
                 }
-                ProjectIntoBoolField(b);
+                //ProjectIntoBoolField(b);
             }
             StopBlocks(blocksToStop);
             foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
         }
 
         /// <summary> Corrects if Falling blocks already landed. </summary>
-        private void CheckBlocks(List<Block> blocks)
+        private void CheckLanding(List<Block> blocks)
         {
             List<Block> blocksToStop = new List<Block>();
-            foreach (Block b in blocks)
+            bool checkAgain = true;
+            while (checkAgain)
             {
-                if (!IsSpace(b, D4.O))
+                checkAgain = false;
+                List<Block> reducedList = new List<Block>(blocks);
+                foreach (Block b in reducedList)
                 {
-                    blocksToStop.Add(b);
-                    //StopBlocks(b);
+                    if (!IsSpace(b, D4.O))
+                    {
+                        checkAgain = true;
+                        blocks.Remove(b);
+                        blocksToStop.Add(b);
+                        nomore_fallingBlocks.Add(b);
+                        if (b == activeBlock)
+                        {
+                            willThrowANewBlock = true;
+                            activeBlock_vX = 0;
+                        }
+                    }
+                    while (!IsSpace(b, D4.O) && IsSpace(b, D4.T))
+                    {//bug situation, shoots the block up away
+                        b.CoordinatesY++;
+                    }
+                    ProjectIntoBoolField(b);
                 }
-                while (!IsSpace(b, D4.O) && IsSpace(b, D4.T))
-                {
-                    b.CoordinatesY++;
-                }
-                ProjectIntoBoolField(b);
             }
             StopBlocks(blocksToStop);
             foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
@@ -348,11 +433,11 @@ namespace Tetris2
                     break;
                 case D4.L:
                     xOff = -1;
-                    if ((int)(b.CoordinatesX) <= 0) result = false;
+                    if ((int)(b.ab_ghostCoordX) <= 0) result = false;
                     break;
                 case D4.R:
                     xOff = 1;
-                    if ((int)(b.CoordinatesX) + b.DimensionX >= DimensionX - 1) result = false;
+                    if ((int)(b.ab_ghostCoordX) + b.DimensionX >= DimensionX) result = false;
                     break;
                 case D4.O:
                     if (b.CoordinatesY < 0) result = false;
@@ -366,7 +451,7 @@ namespace Tetris2
             {
                 for (int y = 0; y < b.DimensionY; y++)
                     if (b.Shape[x, y])
-                        if (boolField[(int)(b.CoordinatesX) + x + xOff, (int)(b.CoordinatesY) + y + yOff])
+                        if (boolField[(int)(b.ab_ghostCoordX) + x + xOff, (int)(b.CoordinatesY) + y + yOff])
                         {
                             result = false;
                             break;
@@ -382,18 +467,26 @@ namespace Tetris2
             foreach (Block b in blocks)
             {
                 if ((int)b.CoordinatesY != b.CoordinatesY)
-                    b.CoordinatesY = (int)b.CoordinatesY + 1;
-                nomore_fallingBlocks.Add(b);
-                if (b == activeBlock)
-                {
-                    ThrowIntoField(preparedBlocks[0]);
-                }
+                    b.CoordinatesY = (int)b.CoordinatesY;
+
+                b.CoordinatesX = b.ab_ghostCoordX;
+
+                b.CoordinatesV = 0;
             }
         }
 
-        private void CheckBlocks(Block b) => CheckBlocks(new List<Block> { b });
+        private void CheckBlocks(Block b) => CheckLanding(new List<Block> { b });
 
-        private void SetPropperPosition(Block b)
+        private void RedrawOnce()
+        {
+            foreach (Block b in blocksToRedraw)
+            {
+                SetCanvasPosition(b);
+            }
+            blocksToRedraw.Clear();
+        }
+
+        private void SetCanvasPosition(Block b)
         {
             b.Canvas.Margin = new System.Windows.Thickness(
                     Settings.gameFramePadding + Settings.blockResolution * b.CoordinatesX, 0, 0,
@@ -402,6 +495,7 @@ namespace Tetris2
 
         private void ThrowIntoField(Block b)
         {
+            willThrowANewBlock = false;
             preparedBlocks.Add(BlockGenerator.NewBlockDefault());
 
             Block nb = BlockGenerator.RandomlyRotateBlock(b);
@@ -409,41 +503,55 @@ namespace Tetris2
             nb.CoordinatesY = DimensionY - nb.DimensionY;
             Grid.SetColumn(nb.Canvas, 1);
             Grid.SetRow(nb.Canvas, 3);
-            SetPropperPosition(nb);
+            SetCanvasPosition(nb);
             gameGrid.Children.Add(nb.Canvas);
 
             //Block nb = BlockGenerator.CutBlock(b);
             allFieldBlocks.Add(nb);
             fallingBlocks.Add(nb);
-            ProjectIntoBoolField(nb);
+            //ProjectIntoBoolField(nb);
             blocksToRedraw.Add(nb);
             nb.ab_ghostCoordX = (int)(nb.CoordinatesX);
             activeBlock = nb;
             preparedBlocks.Remove(b);
         }
 
-        private void ProjectIntoBoolField(Block b)
+        private void ProjectIntoBoolField(Block b) => Rewrite_BoolField_ByBlock(b, true);
+
+        private void RemoveFromBoolField(Block b) => Rewrite_BoolField_ByBlock(b, false);
+
+        private void Rewrite_BoolField_ByBlock(Block b, bool addOrRemove)
         {
             for (int x = 0; x < b.DimensionX; x++)
                 for (int y = 0; y < b.DimensionY; y++)
                     if (b.Shape[x, y])
-                    {
-                        //boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = true;
-                        boolField[b.ab_ghostCoordX + x, (int)b.CoordinatesY + y] = true;
-                    }
+                        //boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = false;
+                        boolField[b.ab_ghostCoordX + x, (int)b.CoordinatesY + y] = addOrRemove;
+
         }
 
-        private void RemoveFromBoolField(Block b)
+        private double Count_dt(Block b, DateTime t)
         {
-            for (int x = 0; x < b.DimensionX; x++)
-                for (int y = 0; y < b.DimensionY; y++)
-                    if (b.Shape[x, y])
-                        boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = false;
+            double dt = t.Subtract(b.CoordinatesT).TotalSeconds;
+            if (dt * 1000 > Settings.gameMaxLag_ms) dt = 0.001 * Settings.gameMaxLag_ms;
+            return dt;
         }
 
-        internal void Lef()
+        //private int c = 0;
+        public void Lef()
         {
-            throw new NotImplementedException();
+            RemoveFromBoolField(activeBlock);
+            if (IsSpace(activeBlock, D4.L)) activeBlock.ab_ghostCoordX -= 1;
+            ProjectIntoBoolField(activeBlock);
+            //
+            //c += 1;
+            //HelperTextOut(c.ToString());
+        }
+        public void Right()
+        {
+            RemoveFromBoolField(activeBlock);
+            if (IsSpace(activeBlock, D4.R)) activeBlock.ab_ghostCoordX += 1;
+            ProjectIntoBoolField(activeBlock);
         }
 
         #region tests

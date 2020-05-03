@@ -57,12 +57,12 @@ namespace Tetris2
         {
             //var x = e.Key;
             //MessageBox.Show(x.ToString());
-            keyManager.AddEvent(e.Key, true, e.Timestamp);
+            keyManager.AddKeyDown(e.Key, DateTime.Now);
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e)
         {
-
+            keyManager.AddKeyUp(e.Key, DateTime.Now);
         }
 
         #region Tests:
