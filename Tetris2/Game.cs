@@ -537,6 +537,23 @@ namespace Tetris2
             return dt;
         }
 
+        private int HeightOfLanding(Block b, int ghost_X)
+        {
+            int result = 0;
+            for (int x = 0; x < b.DimensionX; x++)
+            {
+                int block_bottom = 0;
+                //while (!b.Shape[x, block_bottom] && block_bottom < b.DimensionY) //case of inconsistent blocks
+                while (!b.Shape[x, block_bottom]) 
+                    block_bottom++;
+                int y = (int)(b.CoordinatesY);
+                while (!boolField[ghost_X+x, y+block_bottom-1] && y > 0)
+                    y--;
+                if (y > result) result = y;
+            }
+            return result;
+        }
+
         //private int c = 0;
         public void Lef()
         {
@@ -552,6 +569,11 @@ namespace Tetris2
             RemoveFromBoolField(activeBlock);
             if (IsSpace(activeBlock, D4.R)) activeBlock.ab_ghostCoordX += 1;
             ProjectIntoBoolField(activeBlock);
+        }
+
+        public void GroudTheBlock()
+        {
+            activeBlock.CoordinatesY = HeightOfLanding(activeBlock, activeBlock.ab_ghostCoordX);
         }
 
         #region tests
