@@ -22,7 +22,7 @@ namespace Tetris2
         public double CoordinatesX, CoordinatesY;
         public DateTime CoordinatesT;
         public double CoordinatesV;
-        public int ab_ghostCoordX;
+        public int ghostCoordX;
 
         public double fallingDistance_Helper;
 

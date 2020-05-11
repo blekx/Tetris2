@@ -76,7 +76,7 @@ namespace Tetris2
                 int nos_P1L_ShouldBe = (int)(t.Subtract(ts_player1_Left).TotalMilliseconds / rki) + 1;
                 while (nos_P1L_ShouldBe > nos_player1_Left)
                 {
-                    g1.Lef();
+                    g1.MoveBlock_1Left();
                     nos_player1_Left++;
                 }
             }
@@ -90,7 +90,7 @@ namespace Tetris2
                 int nos_P1R_ShouldBe = (int)(t.Subtract(ts_player1_Right).TotalMilliseconds / rki) + 1;
                 while (nos_P1R_ShouldBe > nos_player1_Right)
                 {
-                    g1.Right();
+                    g1.MoveBlock_1Right();
                     nos_player1_Right++;
                 }
             }
@@ -122,7 +122,7 @@ namespace Tetris2
                     ts_player1_Left_IsInactive = false;
                     ts_player1_Left = t;
 
-                    g1.Lef();
+                    g1.MoveBlock_1Left();
                     nos_player1_Left = 1;
                 }
                 keyTimer.Start();
@@ -134,26 +134,26 @@ namespace Tetris2
                     ts_player1_Right_IsInactive = false;
                     ts_player1_Right = t;
 
-                    g1.Right();
+                    g1.MoveBlock_1Right();
                     nos_player1_Right = 1;
                 }
                 keyTimer.Start();
             }
             else if (key == Settings.player1_LandBlock)
             {
-
+                g1.LandBlockInstantly();
             }
             else if (key == Settings.player1_RotateLeft)
             {
-
+                g1.TryToRotate(-1);
             }
             else if (key == Settings.player1_RotateRight)
             {
-
+                g1.TryToRotate(1);
             }
             else if (key == Settings.player1_RotateTwice)
             {
-
+                g1.TryToRotate(2);
             }
             else switch (key)
                 {

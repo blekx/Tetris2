@@ -41,7 +41,7 @@ namespace Tetris2
         };
         private static Color4B[] BlockColors =
         {
-            new Color4B(100,100,100), // Gr  .
+            new Color4B(100,255,255,255), // Gr  .
             new Color4B(255,127,0),   // O   2x2
             new Color4B(40,40,255),   // B   T
             new Color4B(0,255,255),   // C   Z
@@ -53,7 +53,7 @@ namespace Tetris2
         private static Random random = new Random();
 
         public static Block NewBlockRandomOrientation()
-        {            
+        {
             return RandomlyRotateBlock(NewBlockDefault());
         }
 
@@ -70,7 +70,7 @@ namespace Tetris2
         }
 
         /// <summary>  NEW BLOCK, (direction derived from entering parameter block) ...just counts the final orientation</summary>
-        private static Block RotateBlock(Block b, int rotations)
+        public static Block RotateBlock(Block b, int rotations)
         {
             int direction = b.Direction + rotations;
             while (direction < 0) { direction += b.Directions; }
@@ -88,6 +88,17 @@ namespace Tetris2
             Block result = new Block(p.ID, intoOrientation, p.Directions, dimX, dimY, BlockColors[p.ID], p.Shape[intoOrientation], p.X_Offsets[intoOrientation]);
             result.CoordinatesX = b.CoordinatesX + result.RotationOffset - previousOffset;
             result.CoordinatesY = b.CoordinatesY;
+            return result;
+        }
+
+        internal static Block Ghost(Block activeBlock, int height)
+        {
+            Block result = new Block(activeBlock.ShapeID, activeBlock.Direction, activeBlock.Directions,
+                activeBlock.DimensionX, activeBlock.DimensionY, BlockColors[0], activeBlock.Shape);
+
+            result.CoordinatesX = activeBlock.CoordinatesX;
+            result.CoordinatesY = height;
+
             return result;
         }
 
