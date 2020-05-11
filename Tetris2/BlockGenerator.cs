@@ -86,7 +86,7 @@ namespace Tetris2
             int dimX = (intoOrientation % 2 == 0) ? p.X : p.Y;
             int dimY = (intoOrientation % 2 == 0) ? p.Y : p.X;
             Block result = new Block(p.ID, intoOrientation, p.Directions, dimX, dimY, BlockColors[p.ID], p.Shape[intoOrientation], p.X_Offsets[intoOrientation]);
-            result.CoordinatesX = b.CoordinatesX + result.RotationOffset - previousOffset;
+            result.CoordinatesX = b.ghostCoordX + result.RotationOffset - previousOffset;
             result.CoordinatesY = b.CoordinatesY;
             return result;
         }
@@ -96,7 +96,7 @@ namespace Tetris2
             Block result = new Block(activeBlock.ShapeID, activeBlock.Direction, activeBlock.Directions,
                 activeBlock.DimensionX, activeBlock.DimensionY, BlockColors[0], activeBlock.Shape);
 
-            result.CoordinatesX = activeBlock.CoordinatesX;
+            result.CoordinatesX = activeBlock.ghostCoordX;
             result.CoordinatesY = height;
 
             return result;

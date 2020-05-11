@@ -36,6 +36,7 @@ namespace Tetris2
         B,
         L,
         O,
+        O_FromRotation,
     }
 
     /// <summary>

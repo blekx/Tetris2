@@ -359,6 +359,9 @@ namespace Tetris2
                 case D4.O:
                     if (b.CoordinatesY < 0) result = false;
                     break;
+                case D4.O_FromRotation:
+                    if ((int)(b.ghostCoordX) <= 0 || (int)(b.ghostCoordX) + b.DimensionX >= DimensionX) result = false;
+                    break;
                 default: break;
             }
             if (!result) return result;
@@ -523,7 +526,7 @@ namespace Tetris2
             Block rb = BlockGenerator.RotateBlock(ab.block, clockwise);
             rb.ghostCoordX = ab.block.ghostCoordX;
             rb.CoordinatesY = ab.block.CoordinatesY;
-            if (IsSpace(rb, D4.O))
+            if (IsSpace(rb, D4.O_FromRotation))
                 willRotate = true;
             else if (IsSpace(rb, D4.L))
             {
