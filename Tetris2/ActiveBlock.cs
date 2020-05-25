@@ -157,6 +157,8 @@ namespace Tetris2
         {
             game.gameGrid.Children.Remove(block.Canvas);
             game.gameGrid.Children.Remove(ghostBlock.Canvas);
+            rb.CoordinatesX = block.CoordinatesX;
+            rb.CoordinatesV = block.CoordinatesV;
             block = rb;
             VisualiseCanvas(block);
             CreateNewGhostBlock();

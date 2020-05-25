@@ -541,8 +541,6 @@ namespace Tetris2
 
             if (willRotate)
             {
-                rb.CoordinatesX = ab.block.CoordinatesX;
-
                 allFieldBlocks.Remove(ab.block);
                 fallingBlocks.Remove( ab.block);
                 blocksToRedraw.Remove(ab.block);
