@@ -55,6 +55,8 @@ namespace Tetris2
         //private DateTime nextGameUpdate = DateTime.Now;
         public DateTime nextGameUpdate = DateTime.Now;
 
+        private LinesManager linesManager;
+
         #endregion
 
         #region Constructing
@@ -75,6 +77,7 @@ namespace Tetris2
             gameTimer.Interval = new TimeSpan(0, 0, 0, 0, Settings.gameTimerInterval_ms);
             gameTimer.Tick += new EventHandler(GameTimer_Tick);
             gameTimer.Start();
+            linesManager = new LinesManager(this);
         }
 
         public double Gravity
@@ -88,6 +91,8 @@ namespace Tetris2
                 maxIgnoredLatency = (int)(Tick_ms * Settings.maxIgnoredLatency_ratioFromTick);
             }
         }
+
+        public bool[,] BoolField => boolField;
 
         //public Game(Image image)
         //            : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
@@ -170,7 +175,7 @@ namespace Tetris2
 
         public string WriteBoolField()
         {
-            return Settings.BoolfieldToString(boolField);
+            return Settings.BoolfieldToString(BoolField);
         }
         #endregion
 
@@ -278,7 +283,7 @@ namespace Tetris2
                             if ((int)requiredFreeY == requiredFreeY) requiredFreeY -= 1;
                             int reqY = (int)requiredFreeY;
                             if (reqY >= 0)
-                                if (!boolField[x + (int)b.CoordinatesX, reqY]) continue;
+                                if (!BoolField[x + (int)b.CoordinatesX, reqY]) continue;
                                 else
                                 {
                                     blocksToStop.Add(b);
@@ -371,7 +376,7 @@ namespace Tetris2
             {
                 for (int y = 0; y < b.DimensionY; y++)
                     if (b.Shape[x, y])
-                        if (boolField[(int)(b.ghostCoordX) + x + xOff, (int)(b.CoordinatesY) + y + yOff])
+                        if (BoolField[(int)(b.ghostCoordX) + x + xOff, (int)(b.CoordinatesY) + y + yOff])
                         {
                             result = false;
                             break;
@@ -456,7 +461,7 @@ namespace Tetris2
                 for (int y = 0; y < b.DimensionY; y++)
                     if (b.Shape[x, y])
                         //boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = false;
-                        boolField[b.ghostCoordX + x, (int)b.CoordinatesY + y] = addOrRemove;
+                        BoolField[b.ghostCoordX + x, (int)b.CoordinatesY + y] = addOrRemove;
 
         }
 
@@ -478,7 +483,7 @@ namespace Tetris2
                     block_bottom++;
                 int y = (int)(b.CoordinatesY);
                 while (y > 0)
-                    if (!boolField[ab.block.ghostCoordX + x, y + block_bottom - 1])
+                    if (!BoolField[ab.block.ghostCoordX + x, y + block_bottom - 1])
                         y--;
                     else break;
                 if (y > result) result = y;
