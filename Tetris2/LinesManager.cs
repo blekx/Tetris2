@@ -22,5 +22,17 @@ namespace Tetris2
                 if (game.BoolField[i, y]) totalSquaresInThisLine++;
             return (game.DimensionX == totalSquaresInThisLine);
         }
+
+        public bool IsBlockLocatedInLine(Block b, int line)
+        {
+            bool result = false;
+            if (line < b.CoordinatesY || line >= b.CoordinatesY + b.DimensionY)
+                return result;
+            else
+                for (int x = 0; x < b.DimensionX; x++)
+                    if (b.Shape[x, line - (int)b.CoordinatesY])
+                        return true;
+            return result;
+        }
     }
 }
