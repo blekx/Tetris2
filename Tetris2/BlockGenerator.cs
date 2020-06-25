@@ -137,5 +137,16 @@ namespace Tetris2
         //        result.CoordinatesY = b.CoordinatesY + minY;
         //        return result;
         //}
+
+        public static List<Block> UpperCutRemains(Block b, int yLine, int heightAbove)
+        {
+            List<Block> r = new List<Block>();
+            b.DimensionX
+                b.DimensionY
+            b.Shape
+
+
+            return r;
+        }
     }
 }
