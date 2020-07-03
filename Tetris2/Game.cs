@@ -465,6 +465,11 @@ namespace Tetris2
 
         }
 
+        internal void AddNewlyCutBlocks(List<Block> newlyCutBlocks)
+        {
+            throw new NotImplementedException();
+        }
+
         public static double Count_dt(Block b, DateTime t)
         {
             double dt = t.Subtract(b.CoordinatesT).TotalSeconds;

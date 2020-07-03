@@ -35,7 +35,7 @@ namespace Tetris2
             return result;
         }
 
-        public void CutTheBlock(Block b, int line) // contains some unnecessary checking
+        public void OldCutTheBlock(Block b, int line) // contains some unnecessary checking
         {
             ///y-coord of the erased line, in the internal Block-coordinates
             int yLine = line - (int)(b.CoordinatesY);
@@ -52,6 +52,56 @@ namespace Tetris2
 
 
             killBlock(b);
+        }
+
+        public void Old2CutTheBlock(Block b, int line) // contains some unnecessary checking
+        {
+            ///y-coord of the erased line, in the internal Block-coordinates
+            int yLine = line - (int)(b.CoordinatesY);
+            int heightAbove = b.DimensionY - 1 - yLine;
+            int heightBelow = yLine;
+            if (heightAbove > 0)
+            {//create remainiing upper blocks
+                List<Block> upperBlocks = BlockGenerator.UpperCutRemains(b, yLine, heightAbove);
+            }
+            if (heightBelow > 0)
+            {//create remaining lower blocks
+                List<Block> lowerBlocks = BlockGenerator.LowerCutRemains(b, yLine, heightBelow);
+            }
+
+
+            killBlock(b);
+        }
+
+        public void CutAllTheBlocks(List<int> lines) // contains some unnecessary checking
+        {
+            if (game.fallingBlocks.Count > 0)
+            {
+                throw new Exception("Can not cut falling blocks");
+            }
+            List<Block> blocksWhichMayBeCut = new List<Block>(game.allFieldBlocks);
+            List<Block> blocksToCut = new List<Block>();
+            foreach (Block b in game.allFieldBlocks)
+                foreach (int lY in lines)
+                {
+                    ///y-coord of the erased line, in the internal Block-coordinates
+                    ///lYB_interBlockCoordsSystem
+                    int lYB = lY - (int)b.CoordinatesY;
+                    if (lYB >= 0 && lYB < b.DimensionY)
+                    {
+                        blocksToCut.Add(b);
+                        blocksWhichMayBeCut.Remove(b);
+                        break;
+                    }
+                }
+
+            List<Block> newlyCutBlocks = new List<Block>();
+            foreach (Block b in blocksToCut)
+            {
+                newlyCutBlocks.Add(BlockGenerator.NewlyCutBlocks(b, lines));
+                killBlock(b);
+            }
+            game.AddNewlyCutBlocks(newlyCutBlocks);
         }
 
 

@@ -138,15 +138,33 @@ namespace Tetris2
         //        return result;
         //}
 
-        public static List<Block> UpperCutRemains(Block b, int yLine, int heightAbove)
+        private static List<Block> SplitOneAreaIntoBlocks(bool[,] shape)
         {
             List<Block> r = new List<Block>();
-            b.DimensionX
-                b.DimensionY
-            b.Shape
-
-
+            throw new NotImplementedException();
             return r;
         }
+
+        public static List<Block> LowerCutRemains(Block b, int yLine, int heightAbove)
+        {
+            throw new NotImplementedException();
+        }
+        public static List<Block> UpperCutRemains(Block b, int yLine, int heightAbove)
+        {
+            if ((b.Shape.GetLength(0) != b.DimensionX) ||
+                 (b.Shape.GetLength(1) != b.DimensionY))
+                System.Windows.MessageBox.Show("Array Dimensions Error" + b.ToString());
+            throw new NotImplementedException();
+            return SplitOneAreaIntoBlocks(b.Shape);
+            return r;
+        }
+
+        public static Block NewlyCutBlocks(Block b, List<int> lines)
+        {
+            throw new NotImplementedException();
+        }
+
+
+
     }
 }
