@@ -122,7 +122,7 @@ namespace Tetris2
         }
 
         private void VisualiseCanvas(Block b)
-        {
+        {//obsolate
             Grid.SetColumn(b.Canvas, 1);
             Grid.SetRow(b.Canvas, 3);
             Game.SetCanvasPosition(b);
@@ -138,10 +138,13 @@ namespace Tetris2
         }
 
         internal void GetNextBlock(Block b)
-        {
+        {//obsolate
             block = BlockGenerator.RandomlyRotateBlock(b);
             block.CoordinatesX = game.DimensionX / 2 - block.DimensionX / 2 + block.RotationOffset;
             block.CoordinatesY = game.DimensionY - block.DimensionY;
+
+
+
             VisualiseCanvas(block);
 
             game.allFieldBlocks.Add(block);

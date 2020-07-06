@@ -164,6 +164,71 @@ namespace Tetris2
             throw new NotImplementedException();
         }
 
+        internal static List<Block> GiveRemainingBlockies(Block b, List<int> lines)
+        {
+            //throw new NotImplementedException();
+            int x = b.Shape.GetLength(0);
+            int y = b.Shape.GetLength(1);
+
+            //copy bf:
+            bool[,] newBoolfield = new bool[x, y];
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                    newBoolfield[i, j] = b.Shape[i, j];
+
+            foreach (int l in lines)
+            {
+                int c = l - (int)(b.CoordinatesY);
+                for (int i = 0; i < x; i++)
+                    newBoolfield[x, c] = false;
+            } // ^ delete the completed lines
+
+            bool done = false;
+            while (!done)
+            {
+                done = true;
+                int i;
+                int j;
+                for (i = 0; i < x; i++)
+                {
+                    for (j = 0; j < y; j++)
+                        if (newBoolfield[i, j])
+                        {
+                            #region //exploring new shape
+                            bool[,] newShapeUncut = new bool[x, y];
+                            //bool keepExploring = true;
+                            //loc
+                            List<Coords> todo = new List<Coords> { new Coords(i, j) };
+                            while (todo.Count>0)
+                            {
+                                //List of coords
+                                //look around
+                                //remove this one
+                            }
+                            #endregion
+                            done = false;
+                            break;
+                        }
+                    if (done == false)
+                        break;
+                }
+                if (i == x - 1 && j == y - 1) done = true;
+            }
+
+
+        }
+        private struct Coords
+        {
+            int x;
+            int y;
+
+            public Coords(int x, int y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
 
 
     }

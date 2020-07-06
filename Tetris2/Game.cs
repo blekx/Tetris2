@@ -12,7 +12,7 @@ using System.Windows.Threading;
 
 namespace Tetris2
 {
-    public class Game
+    public partial class Game
     {
         #region field
         /// <summary> IsGameSmooth_NotTicking  </summary>
@@ -204,6 +204,22 @@ namespace Tetris2
 
             CheckLanding(fallingBlocks);
             RedrawOnce();
+            List<int> justCompletedTheseLines = LinesManager.CompletedLines(boolField);
+            if (justCompletedTheseLines.Count > 0)
+            {
+                deactivated = true;
+                List<Block> AddingBlocks = LinesManager.CutAllBlocksByLines(allFieldBlocks, justCompletedTheseLines, this);
+                foreach (Block b in AddingBlocks)
+                    GameField_AddBlock(b);
+                // ? boolField: reference / new var??
+                foreach (int line in justCompletedTheseLines)
+                    for (int i = 0; i < DimensionX; i++)
+                        boolField[i, line] = false; //free the lines
+
+                // ADD VISUAL EFFECT
+
+                RedrawOnce(); // 2.?
+            }
 
             if (abJustLanded_ThrowNew && !deactivated)
                 //ThrowIntoField(preparedBlocks[0]);
@@ -552,15 +568,15 @@ namespace Tetris2
             if (willRotate)
             {
                 allFieldBlocks.Remove(ab.block);
-                fallingBlocks.Remove( ab.block);
+                fallingBlocks.Remove(ab.block);
                 blocksToRedraw.Remove(ab.block);
 
-                ab.RotateInto(rb); 
+                ab.RotateInto(rb);
 
                 allFieldBlocks.Add(ab.block);
-                fallingBlocks.Add( ab.block);
+                fallingBlocks.Add(ab.block);
                 blocksToRedraw.Add(ab.block);
-            } 
+            }
 
             ProjectIntoBoolField(ab.block);
         }
