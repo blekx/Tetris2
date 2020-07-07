@@ -156,7 +156,7 @@ namespace Tetris2
                 System.Windows.MessageBox.Show("Array Dimensions Error" + b.ToString());
             throw new NotImplementedException();
             return SplitOneAreaIntoBlocks(b.Shape);
-            return r;
+            //return r;
         }
 
         public static Block NewlyCutBlocks(Block b, List<int> lines)
@@ -169,6 +169,7 @@ namespace Tetris2
             //throw new NotImplementedException();
             int x = b.Shape.GetLength(0);
             int y = b.Shape.GetLength(1);
+            List<Block> result = new List<Block>();
 
             //copy bf:
             bool[,] newBoolfield = new bool[x, y];
@@ -180,7 +181,7 @@ namespace Tetris2
             {
                 int c = l - (int)(b.CoordinatesY);
                 for (int i = 0; i < x; i++)
-                    newBoolfield[x, c] = false;
+                    newBoolfield[i, c] = false;
             } // ^ delete the completed lines
 
             bool done = false;
@@ -188,7 +189,7 @@ namespace Tetris2
             {
                 done = true;
                 int i;
-                int j;
+                int j = 0;
                 for (i = 0; i < x; i++)
                 {
                     for (j = 0; j < y; j++)
@@ -196,17 +197,58 @@ namespace Tetris2
                         {
                             #region //exploring new shape
                             bool[,] newShapeUncut = new bool[x, y];
+                            int minX = i;
+                            int minY = j;
+                            int maxX = i;
+                            int maxY = j;
                             //bool keepExploring = true;
                             //loc
                             List<Coords> todo = new List<Coords> { new Coords(i, j) };
-                            while (todo.Count>0)
+                            newBoolfield[i, j] = false;
+                            newShapeUncut[i, j] = true;
+                            while (todo.Count > 0)
                             {
+                                Coords current = todo[0];
+                                if (current.X + 1 < x)
+                                    if (newBoolfield[current.X + 1, current.Y])
+                                    {
+                                        todo.Add(new Coords(current.X + 1, current.Y));
+                                        if (current.X + 1 > maxX) maxX = current.X + 1;
+                                        newBoolfield[current.X + 1, current.Y] = false;
+                                        newShapeUncut[current.X + 1, current.Y] = true;
+                                    }
+                                if (current.X - 1 >= 0)
+                                    if (newBoolfield[current.X - 1, current.Y])
+                                    {
+                                        todo.Add(new Coords(current.X - 1, current.Y));
+                                        if (current.X - 1 < minX) minX = current.X - 1;
+                                        newBoolfield[current.X - 1, current.Y] = false;
+                                        newShapeUncut[current.X - 1, current.Y] = true;
+                                    }
+                                if (current.Y + 1 < y)
+                                    if (newBoolfield[current.X, current.Y + 1])
+                                    {
+                                        todo.Add(new Coords(current.X, current.Y + 1));
+                                        if (current.Y + 1 > maxY) maxY = current.Y + 1;
+                                        newBoolfield[current.X, current.Y + 1] = false;
+                                        newShapeUncut[current.X, current.Y + 1] = true;
+                                    }
+                                if (current.Y - 1 >= 0)
+                                    if (newBoolfield[current.X, current.Y - 1])
+                                    {
+                                        todo.Add(new Coords(current.X, current.Y - 1));
+                                        if (current.Y - 1 < minY) minY = current.Y - 1;
+                                        newBoolfield[current.X, current.Y - 1] = false;
+                                        newShapeUncut[current.X, current.Y - 1] = true;
+                                    }
+                                todo.RemoveAt(0);
                                 //List of coords
                                 //look around
                                 //remove this one
                             }
+                            result.Add(CreateRemains(b, newShapeUncut, minX, minY, maxX, maxY));
                             #endregion
-                            done = false;
+                            done = false; //found some remains, will look for another ones
                             break;
                         }
                     if (done == false)
@@ -214,18 +256,31 @@ namespace Tetris2
                 }
                 if (i == x - 1 && j == y - 1) done = true;
             }
-
-
+            return result;
         }
-        private struct Coords
+
+        private static Block CreateRemains(Block b, bool[,] newShapeUncut, int minX, int minY, int maxX, int maxY)
         {
-            int x;
-            int y;
+            bool[,] newShapeCut = new bool[maxX + 1 - minX, maxY + 1 - minY];
+            for (int x = minX; x <= maxX; x++)
+                for (int y = minY; y <= maxY; y++)
+                    newShapeCut[x - minX, y - minY] = newShapeUncut[x, y];
+            Block result = new Block(0,0,1, maxX + 1 - minX, maxY + 1 - minY,b.Color,newShapeCut);
+            result.CoordinatesX = b.CoordinatesX + minX;
+            result.CoordinatesY = b.CoordinatesY + minY;
+            return result;
+            throw new NotImplementedException();
+        }
+
+        public struct Coords
+        {
+            public int X;
+            public int Y;
 
             public Coords(int x, int y)
             {
-                this.x = x;
-                this.y = y;
+                this.X = x;
+                this.Y = y;
             }
         }
 
