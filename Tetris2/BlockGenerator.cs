@@ -179,9 +179,11 @@ namespace Tetris2
 
             foreach (int l in lines)
             {
+                ///c = cleared line of one block
                 int c = l - (int)(b.CoordinatesY);
-                for (int i = 0; i < x; i++)
-                    newBoolfield[i, c] = false;
+                if (c >= 0 && c < b.DimensionY)
+                    for (int i = 0; i < x; i++)
+                        newBoolfield[i, c] = false;
             } // ^ delete the completed lines
 
             bool done = false;
@@ -265,8 +267,9 @@ namespace Tetris2
             for (int x = minX; x <= maxX; x++)
                 for (int y = minY; y <= maxY; y++)
                     newShapeCut[x - minX, y - minY] = newShapeUncut[x, y];
-            Block result = new Block(0,0,1, maxX + 1 - minX, maxY + 1 - minY,b.Color,newShapeCut);
+            Block result = new Block(0, 0, 1, maxX + 1 - minX, maxY + 1 - minY, b.Color, newShapeCut);
             result.CoordinatesX = b.CoordinatesX + minX;
+            result.ghostCoordX = (int)result.CoordinatesX;
             result.CoordinatesY = b.CoordinatesY + minY;
             return result;
             throw new NotImplementedException();

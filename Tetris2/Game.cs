@@ -219,6 +219,10 @@ namespace Tetris2
                 // ADD VISUAL EFFECT
 
                 RedrawOnce(); // 2.?
+
+                groupToFallTogether = allFieldBlocks;
+                TestSuspiciousBlocksOnStartFalling(t);
+                if (fallingBlocks.Count == 0) deactivated = false;
             }
 
             if (abJustLanded_ThrowNew && !deactivated)
