@@ -205,31 +205,34 @@ namespace Tetris2
             CheckLanding(fallingBlocks);
             RedrawOnce();
             List<int> justCompletedTheseLines = LinesManager.CompletedLines(boolField);
-            if (justCompletedTheseLines.Count > 0)
-            {
-                deactivated = true;
-                List<Block> AddingBlocks = LinesManager.CutAllBlocksByLines(allFieldBlocks, justCompletedTheseLines, this);
-                foreach (Block b in AddingBlocks)
-                    GameField_AddBlock(b);
-                // ? boolField: reference / new var??
-                foreach (int line in justCompletedTheseLines)
-                    for (int i = 0; i < DimensionX; i++)
-                        boolField[i, line] = false; //free the lines
-
-                // ADD VISUAL EFFECT
-
-                RedrawOnce(); // 2.?
-
-                groupToFallTogether = allFieldBlocks;
-                TestSuspiciousBlocksOnStartFalling(t);
-                if (fallingBlocks.Count == 0) deactivated = false;
-            }
+            if (justCompletedTheseLines.Count > 0) 
+                JustCompletedNewLines(justCompletedTheseLines);
 
             if (abJustLanded_ThrowNew && !deactivated)
                 //ThrowIntoField(preparedBlocks[0]);
                 NextActiveBlock();
             //HelperTextOut(activeBlock.fallingDistance_Helper.ToString("0.000") + Environment.NewLine + activeBlock.CoordinatesV.ToString()
             //+ Environment.NewLine + c.ToString());
+        }
+
+        private void JustCompletedNewLines(List<int> justCompletedTheseLines)
+        {
+            deactivated = true;
+            List<Block> AddingBlocks = LinesManager.CutAllBlocksByLines(allFieldBlocks, justCompletedTheseLines, this);
+            foreach (Block b in AddingBlocks)
+                GameField_AddBlock(b);
+            // ? boolField: reference / new var??
+            foreach (int line in justCompletedTheseLines)
+                for (int i = 0; i < DimensionX; i++)
+                    boolField[i, line] = false; //free the lines
+
+            // ADD VISUAL EFFECT
+
+            //RedrawOnce(); // 2.?
+
+            groupToFallTogether = allFieldBlocks;
+            //TestSuspiciousBlocksOnStartFalling(t);
+            if (fallingBlocks.Count == 0) deactivated = false;
         }
 
         private void TestSuspiciousBlocksOnStartFalling(DateTime t)
@@ -332,8 +335,8 @@ namespace Tetris2
             while (checkAgain)
             {
                 checkAgain = false;
-                List<Block> reducedList = new List<Block>(blocks);
-                foreach (Block b in reducedList)
+                List<Block> backupList = new List<Block>(blocks);
+                foreach (Block b in backupList)
                 {
                     if (!IsSpace(b, D4.O))
                     {

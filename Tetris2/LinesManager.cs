@@ -142,7 +142,7 @@ namespace Tetris2
             {
                 foreach (int l in lines)
                 {
-                    if (b.CoordinatesY <= l || b.CoordinatesY + b.DimensionY > l)
+                    if (b.CoordinatesY <= l && b.CoordinatesY + b.DimensionY > l)
                     {
                         BlocksToCut.Add(b);
                         //                        BlocksToKill.Add(b);
