@@ -29,9 +29,10 @@ namespace Tetris2
         public MainWindow()
         {
             InitializeComponent();
-            
+
             borderBlinker = new BorderBlinker(this);
-            mainGame = new Game(ViewBoxGame1);
+            //mainGame = new Game(ViewBoxGame1);
+            mainGame = new Game(ViewBoxGame1, this);
             keyManager = new KeyboardManager(this);
 
             #region tests:
@@ -68,6 +69,11 @@ namespace Tetris2
         #region Tests:
         int i, j;
         Random r = new Random();
+
+        public void UpdateBoolfieldVisualisation()
+        {
+            monitoring.UpdateBoolfieldVisualisation();
+        }
 
         private void Button_test3(object sender, RoutedEventArgs e)
         {

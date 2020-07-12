@@ -32,6 +32,11 @@ namespace Tetris2
             mw.tbGamefield.Text = mw.mainGame.WriteBoolField();
         }
 
+        public void UpdateBoolfieldVisualisation()
+        {
+            mw.tbGamefield.Text = mw.mainGame.WriteBoolField();
+        }
+
         internal void Start()
         {
             timer.Start();

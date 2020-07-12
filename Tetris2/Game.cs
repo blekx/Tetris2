@@ -28,7 +28,7 @@ namespace Tetris2
         /// <summary> [0,0] = Left, Bottom;  False = Free </summary>
         private bool[,] boolField;
         public List<Block> allFieldBlocks = new List<Block>();
-        private List<Block> groupToFallTogether = new List<Block>();
+        //private List<Block> groupToFallTogether = new List<Block>();
         public List<Block> fallingBlocks = new List<Block>();
         private List<Block> nomore_fallingBlocks = new List<Block>();
         public List<Block> blocksToRedraw = new List<Block>();
@@ -42,6 +42,8 @@ namespace Tetris2
         /// <summary> Game (active block) Paused for Removing Lines etc. </summary>
         private bool deactivated = false;
 
+
+        private MainWindow mw;
 
         public Viewbox ParentControlElement { get; private set; }
         //private Viewbox parent;
@@ -98,6 +100,11 @@ namespace Tetris2
         //            : this((WriteableBitmap)image.Source, 10, 20, 1.5) { }
         public Game(object parentControl)
                : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, Settings.gameDefaultGravity_T) { }
+        public Game(object parentControl, MainWindow mw)
+               : this(parentControl, Settings.gameFieldX, Settings.gameFieldY, Settings.gameDefaultGravity_T)
+        {
+            this.mw = mw;
+        }
 
 
         private void CreateOwnEnvironment()
@@ -198,21 +205,21 @@ namespace Tetris2
             DateTime t = DateTime.Now;
             ab.CountActiveBlockHorizontally(t);
 
-            TestSuspiciousBlocksOnStartFalling(t);
 
             if (Smooth) CountFallingBlocksSmoothly(fallingBlocks, t); else CountFallingBlocks_TickingVersion(fallingBlocks);
 
             CheckLanding(fallingBlocks);
             RedrawOnce();
             List<int> justCompletedTheseLines = LinesManager.CompletedLines(boolField);
-            if (justCompletedTheseLines.Count > 0) 
+            if (justCompletedTheseLines.Count > 0)
+            {
                 JustCompletedNewLines(justCompletedTheseLines);
+                TestAllBlocks_OnStartFalling_AfterLinesDone(t);
+            }
 
+            if (fallingBlocks.Count == 0) deactivated = false;
             if (abJustLanded_ThrowNew && !deactivated)
-                //ThrowIntoField(preparedBlocks[0]);
                 NextActiveBlock();
-            //HelperTextOut(activeBlock.fallingDistance_Helper.ToString("0.000") + Environment.NewLine + activeBlock.CoordinatesV.ToString()
-            //+ Environment.NewLine + c.ToString());
         }
 
         private void JustCompletedNewLines(List<int> justCompletedTheseLines)
@@ -230,34 +237,49 @@ namespace Tetris2
 
             //RedrawOnce(); // 2.?
 
-            groupToFallTogether = allFieldBlocks;
+            // replaced by TEST ALL BLOCKS: groupToFallTogether = allFieldBlocks;
             //TestSuspiciousBlocksOnStartFalling(t);
-            if (fallingBlocks.Count == 0) deactivated = false;
         }
 
-        private void TestSuspiciousBlocksOnStartFalling(DateTime t)
+        private void TestAllBlocks_OnStartFalling_AfterLinesDone(DateTime t)
         {
-            List<Block> theyWillFall = new List<Block>();
+            List<Block> allB = new List<Block>(allFieldBlocks);
+            List<Block> oneWaveB = new List<Block>();
+            List<Block> theyWillFall = new List<Block>(allFieldBlocks);
             List<Block> theyWont = new List<Block>();
             bool doTest = true;
+            foreach (Block b in allB)
+            {//remove all blocks from the boolField[ , ]
+                RemoveFromBoolField(b);
+            }
             while (doTest)
-            {
+            {// wave by wave...
                 doTest = false;
-                foreach (Block b in groupToFallTogether)
-                    if (IsSpace(b, D4.B))
-                    {
-                        theyWillFall.Add(b);
-                        doTest = true;
-                    }
-                    else theyWont.Add(b);
-                foreach (Block b in theyWillFall)
+                foreach (Block b in allB)
                 {
-                    groupToFallTogether.Remove(b);
-                    fallingBlocks.Add(b);
+                    if (!IsSpace(b, D4.B))
+                    {// land blocks, keep them stopped
+                        doTest = true;
+                        oneWaveB.Add(b);
+                        ProjectIntoBoolField(b);
+                    }
                 }
+                foreach (Block b in oneWaveB)
+                {//and the other ones, remaining ones, they will fall
+                    theyWillFall.Remove(b);
+                    theyWont.Add(b);
+                    allB.Remove(b);
+                }
+            }
+            foreach (Block b in theyWillFall)
+            {
+                fallingBlocks.Add(b);
+                //if (b.CoordinatesV == 0)
+                    b.CoordinatesT = t;
                 //CountFallingBlocksSmoothly(theyWillFall, t);
             }
         }
+
 
         private void CountFallingBlocks_TickingVersion(List<Block> blocks)
         {
@@ -324,7 +346,7 @@ namespace Tetris2
                 //ProjectIntoBoolField(b);
             }
             StopBlocks(blocksToStop);
-            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
+        //    foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
         }
 
         /// <summary> Corrects if Falling blocks already landed. </summary>
@@ -343,7 +365,7 @@ namespace Tetris2
                         checkAgain = true;
                         blocks.Remove(b);
                         blocksToStop.Add(b);
-                        nomore_fallingBlocks.Add(b);
+                        //nomore_fallingBlocks.Add(b);
                         if (b == ab.block)
                         {
                             abJustLanded_ThrowNew = true;
@@ -359,7 +381,8 @@ namespace Tetris2
                 }
             }
             StopBlocks(blocksToStop);
-            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
+//            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
+            foreach (Block b in blocksToStop) fallingBlocks.Remove(b);
         }
 
         private bool IsSpace(Block b, D4 direction)
@@ -485,7 +508,7 @@ namespace Tetris2
                     if (b.Shape[x, y])
                         //boolField[(int)b.CoordinatesX + x, (int)b.CoordinatesY + y] = false;
                         BoolField[b.ghostCoordX + x, (int)b.CoordinatesY + y] = addOrRemove;
-
+            mw.UpdateBoolfieldVisualisation();
         }
 
         internal void AddNewlyCutBlocks(List<Block> newlyCutBlocks)
