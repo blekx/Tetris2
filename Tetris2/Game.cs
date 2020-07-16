@@ -380,7 +380,7 @@ namespace Tetris2
                     ProjectIntoBoolField(b);
                 }
             }
-            StopBlocks(blocksToStop);
+            StopBlocks(blocksToStop); //nevim
 //            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
             foreach (Block b in blocksToStop) fallingBlocks.Remove(b);
         }
