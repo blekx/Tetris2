@@ -163,6 +163,7 @@ namespace Tetris2
 
         public static void killBlock(Block b, Game game)
         {
+            game.RemoveFromBoolField(b);
             game.gameGrid.Children.Remove(b.Canvas);
             game.allFieldBlocks.Remove(b);
         }

@@ -207,9 +207,9 @@ namespace Tetris2
 
 
             if (Smooth) CountFallingBlocksSmoothly(fallingBlocks, t); else CountFallingBlocks_TickingVersion(fallingBlocks);
-
             CheckLanding(fallingBlocks);
             RedrawOnce();
+
             List<int> justCompletedTheseLines = LinesManager.CompletedLines(boolField);
             if (justCompletedTheseLines.Count > 0)
             {
@@ -499,7 +499,7 @@ namespace Tetris2
 
         private void ProjectIntoBoolField(Block b) => Rewrite_BoolField_ByBlock(b, true);
 
-        private void RemoveFromBoolField(Block b) => Rewrite_BoolField_ByBlock(b, false);
+        public void RemoveFromBoolField(Block b) => Rewrite_BoolField_ByBlock(b, false);
 
         private void Rewrite_BoolField_ByBlock(Block b, bool addOrRemove)
         {
