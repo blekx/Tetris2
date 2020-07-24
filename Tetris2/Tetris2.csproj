@@ -56,7 +56,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ActiveBlock.cs" />
+    <Compile Include="Boolfield.cs" />
     <Compile Include="GameBlocks.cs" />
+    <Compile Include="Game_CheckLanding.cs" />
     <Compile Include="KeyboardManager.cs" />
     <Compile Include="LinesManager.cs" />
     <Compile Include="LinesRemover.cs" />

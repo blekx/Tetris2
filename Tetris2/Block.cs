@@ -26,6 +26,9 @@ namespace Tetris2
 
         public double fallingDistance_Helper;
 
+        private static int id;
+        public int ID { get; }
+
         public Block()
             : this(0, 0, 1, 1, 1, new Color4B(200, 200, 200), new bool[1, 1] { { true } })
         { }
@@ -43,6 +46,7 @@ namespace Tetris2
             Shape = new bool[DimensionX, DimensionY];
             Shape = shape ?? throw new ArgumentNullException(nameof(shape));
             this.Canvas = Painter.PaintBlock(this);
+            ID = id++;
         }
 
         /// <summary>
@@ -69,9 +73,10 @@ namespace Tetris2
                 }
                 if (y != 0) s += Environment.NewLine;
             }
-            return String.Format("X, Y: {0}, {1}", CoordinatesX, CoordinatesY)
-           + Environment.NewLine + String.Format("Size: {0} * {1}", DimensionX, DimensionY)
-           + Environment.NewLine + String.Format("Color: {0}", Color)
+            return String.Format("ID:{0},", ID)
+           + Environment.NewLine + String.Format("X, Y: {0}, {1}", CoordinatesX, CoordinatesY)
+           + Environment.NewLine + String.Format(" Size: {0} * {1}", DimensionX, DimensionY)
+           + Environment.NewLine + String.Format(" Color: {0}", Color)
            + Environment.NewLine + "Shape ID, Direction (x of n):"
            + Environment.NewLine + String.Format("{0}, ( {1} / {2} )", ShapeID, Direction, Directions)
            + Environment.NewLine + s;

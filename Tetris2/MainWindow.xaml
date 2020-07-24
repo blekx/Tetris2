@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Tetris2"
         mc:Ignorable="d"
         
-        Title="MainWindow" Height="500" Width="1000"
+        Title="MainWindow" Height="560" Width="1000"
         MouseDoubleClick="Window_MouseDoubleClick"
         Background="Transparent" AllowsTransparency="True" WindowStyle="None"
         MinWidth="260" MinHeight="370"

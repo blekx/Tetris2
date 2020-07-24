@@ -58,6 +58,7 @@ namespace Tetris2
         public DateTime nextGameUpdate = DateTime.Now;
 
         private LinesManager linesManager;
+        private bool anyBlockJustStopped = false;
 
         #endregion
 
@@ -210,12 +211,20 @@ namespace Tetris2
             CheckLanding(fallingBlocks);
             RedrawOnce();
 
-            List<int> justCompletedTheseLines = LinesManager.CompletedLines(boolField);
-            if (justCompletedTheseLines.Count > 0)
-            {
-                JustCompletedNewLines(justCompletedTheseLines);
-                TestAllBlocks_OnStartFalling_AfterLinesDone(t);
-            }
+
+            //if (anyBlockJustStopped)
+            //{
+                List<int> justCompletedTheseLines = LinesManager.CompletedLines(boolField);
+                if (justCompletedTheseLines.Count > 0)
+                {
+                    JustCompletedNewLines(justCompletedTheseLines);
+                    TestAllBlocks_OnStartFalling_AfterLinesDone(t);
+                }
+            //}
+            
+
+            //anyBlockJustStopped = false;
+
 
             if (fallingBlocks.Count == 0) deactivated = false;
             if (abJustLanded_ThrowNew && !deactivated)
@@ -244,14 +253,14 @@ namespace Tetris2
         private void TestAllBlocks_OnStartFalling_AfterLinesDone(DateTime t)
         {
             List<Block> allB = new List<Block>(allFieldBlocks);
-            List<Block> oneWaveB = new List<Block>();
-            List<Block> theyWillFall = new List<Block>(allFieldBlocks);
-            List<Block> theyWont = new List<Block>();
+            List<Block> StoppedWave = new List<Block>();
+            //List<Block> theyWillFall = new List<Block>(allFieldBlocks);
             bool doTest = true;
-            foreach (Block b in allB)
-            {//remove all blocks from the boolField[ , ]
-                RemoveFromBoolField(b);
-            }
+            //foreach (Block b in allB)
+            //{//remove all blocks from the boolField[ , ]
+            //    //RemoveFromBoolField(b);
+            //}
+            ClearBoolfield();
             while (doTest)
             {// wave by wave...
                 doTest = false;
@@ -260,26 +269,34 @@ namespace Tetris2
                     if (!IsSpace(b, D4.B))
                     {// land blocks, keep them stopped
                         doTest = true;
-                        oneWaveB.Add(b);
+                        StoppedWave.Add(b);
                         ProjectIntoBoolField(b);
                     }
                 }
-                foreach (Block b in oneWaveB)
+                foreach (Block b in StoppedWave)
                 {//and the other ones, remaining ones, they will fall
-                    theyWillFall.Remove(b);
-                    theyWont.Add(b);
+                    //theyWillFall.Remove(b);
                     allB.Remove(b);
                 }
+                StoppedWave.Clear();
             }
-            foreach (Block b in theyWillFall)
+            fallingBlocks.Clear();
+            foreach (Block b in allB)//theyWillFall)
             {
                 fallingBlocks.Add(b);
                 //if (b.CoordinatesV == 0)
-                    b.CoordinatesT = t;
-                //CountFallingBlocksSmoothly(theyWillFall, t);
+                b.CoordinatesT = t;
             }
         }
 
+        private void ClearBoolfield()
+        {
+            int x = boolField.GetLength(0);
+            int y = boolField.GetLength(1);
+            for (int i = 0; i < x; i++)
+                for (int j = 0; j < y; j++)
+                    boolField[i, j] = false;
+        }
 
         private void CountFallingBlocks_TickingVersion(List<Block> blocks)
         {
@@ -346,45 +363,9 @@ namespace Tetris2
                 //ProjectIntoBoolField(b);
             }
             StopBlocks(blocksToStop);
-        //    foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
+            //    foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
         }
-
-        /// <summary> Corrects if Falling blocks already landed. </summary>
-        private void CheckLanding(List<Block> blocks)
-        {
-            List<Block> blocksToStop = new List<Block>();
-            bool checkAgain = true;
-            while (checkAgain)
-            {
-                checkAgain = false;
-                List<Block> backupList = new List<Block>(blocks);
-                foreach (Block b in backupList)
-                {
-                    if (!IsSpace(b, D4.O))
-                    {
-                        checkAgain = true;
-                        blocks.Remove(b);
-                        blocksToStop.Add(b);
-                        //nomore_fallingBlocks.Add(b);
-                        if (b == ab.block)
-                        {
-                            abJustLanded_ThrowNew = true;
-                            ab.vX = 0;
-                            gameGrid.Children.Remove(ab.ghostBlock.Canvas);
-                        }
-                    }
-                    while (!IsSpace(b, D4.O) && IsSpace(b, D4.T))
-                    {//bug situation, shoots the block up away
-                        b.CoordinatesY++;
-                    }
-                    ProjectIntoBoolField(b);
-                }
-            }
-            StopBlocks(blocksToStop); //nevim
-//            foreach (Block b in nomore_fallingBlocks) fallingBlocks.Remove(b);
-            foreach (Block b in blocksToStop) fallingBlocks.Remove(b);
-        }
-
+        
         private bool IsSpace(Block b, D4 direction)
         {   //works also with ACTIVE BLOCK (rudiment)
             int xOff = 0, yOff = 0;
@@ -435,6 +416,7 @@ namespace Tetris2
         private void StopBlocks(Block b) => StopBlocks(new List<Block> { b });
         private void StopBlocks(List<Block> blocks)
         {
+            anyBlockJustStopped = true;
             foreach (Block b in blocks)
             {
                 if ((int)b.CoordinatesY != b.CoordinatesY)
@@ -446,7 +428,7 @@ namespace Tetris2
             }
         }
 
-        private void CheckBlocks(Block b) => CheckLanding(new List<Block> { b });
+        //private void CheckBlocks(Block b) => CheckLanding(new List<Block> { b });
 
         private void RedrawOnce()
         {
